@@ -1,0 +1,13 @@
+{
+  "tsconfig": "./tsconfig.app.json",
+  "entryPointStrategy": "expand",
+  "entryPoints": ["./src"],
+  "out": "./docs",
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/node_modules/**",
+    "**/dist/**"
+  ],
+  "excludePrivate": true
+}

@@ -1,0 +1,887 @@
+body.survey-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 0px;
+    min-height: 100vh
+}
+
+.newSurveyWrapper {
+    display: grid;
+    position:relative;
+    overflow: hidden;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 40px 54px;
+    max-width: 1135px;
+    min-width: 0px;
+    height: 100%;
+    align-self: center;
+    border: 1px solid rgb(238, 238, 238);
+    background-color: rgb(53, 38, 58);
+    border-top-right-radius: 100px;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    >.statusCloseArea{
+        
+        >.firstPTag {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3px 12px 3px 8px;
+            background-color: rgb(255, 183, 112);
+            border-top-right-radius: 14px;
+            border-top-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-bottom-left-radius: 0px;
+            font-family: 'Mulish', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: rgb(0, 0, 0);
+            width: 59px;
+            height: 26px;
+        }
+        >.cancelButtonMobile{
+            display:none;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(113, 82, 74);
+            border: 1px solid rgb(113, 82, 74);
+            border-radius:15px;
+            cursor:pointer;
+            width:40px;
+            height:40px;
+            >img{
+                width:20px;
+                height:20px;
+            }
+            &:hover{
+                background-color: rgb(150, 117, 112);
+            }
+        }
+    }
+}
+
+.newSurveyForm {
+    display: flex;
+    max-width: 1052px;
+    // height: 100%;
+    background-color: rgb(67, 50, 73);
+    border-top-right-radius: 100px;
+    padding: 33px 40px;
+    gap: 64px;
+    overflow-y: unset;
+}
+
+.newSurveyForm::-webkit-scrollbar {
+    width: 6px;
+}
+
+.newSurveyForm::-webkit-scrollbar-track {
+    background-color: rgb(67, 50, 73);
+    border-top-right-radius: 100px;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.newSurveyForm::-webkit-scrollbar-thumb {
+    background-color: rgb(255, 183, 112);
+}
+
+.headlineButtonAria {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    >.headline {
+        font-family: 'Nerko One', sans-serif;
+        font-size: 56px;
+        color: rgb(255, 183, 112);
+        margin: 0px;
+    }
+
+    >.cancelButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 108px;
+        height: 40px;
+        gap: 10px;
+        background-color: rgb(113, 82, 74);
+        border: 1px solid rgb(113, 82, 74);
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        font-family:'Nokora', sans-serif;
+        font-size: 16px;
+        &:hover {
+            background-color: rgb(150, 117, 112);
+        }
+    }
+}
+
+
+
+.publishButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: flex-end;
+    width: 79px;
+    height: 48px;
+    gap: 8px;
+    padding: 12px 16px 12px 40px;
+    margin-top: 28px;
+    border: 1px solid rgb(255, 183, 112);
+    border-radius: 10px;
+    background-color: rgb(255, 183, 112);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Nokora', sans-serif;
+    font-size:18px;
+    >img {
+        transition: all 0.3s ease-in-out;
+        opacity: 0;
+    }
+
+    &:hover img {
+        transition: all 0.3s ease-in-out;
+        opacity: 1;
+    }
+
+    &:hover {
+        transition: all 0.3s ease-in-out;
+        width: 105px;
+        padding: 12px 16px 12px 20px;
+    }
+}
+
+.mainDataOfSurvey {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 64px;
+    row-gap: 32px;
+    // height: 545px;
+
+    >.nameDateAria {
+        display: block;
+        height: 100%;
+        width: 463px;
+    }
+
+    >.SurveyName {
+        margin: 0px;
+        width: 429px;
+    }
+
+    >.setEndDate {
+        margin: 0px;
+    }
+}
+
+.surveyNameAria {
+    >p {
+        font-family: 'Mulish', sans-serif;
+        font-size:18px;
+        color: white;
+        height:23px;
+    }
+
+    margin-bottom: 5px;
+    width:100%;
+
+    >.surveyNameError {
+        margin: 15px 0px 0px 0px;
+        min-height: 22px;
+        color: red;
+    }
+
+    >.surveyNameInputAndImg {
+        display: flex;
+        max-width: 463px;
+        gap: 8px;
+
+        >img:hover {
+            cursor: pointer;
+            content: url('../../../assets/icons/deleteIcon_hover.svg');
+        }
+
+        >.surveyNameInput {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            max-width: 439px;
+            width: 100%;
+            height: 38px;
+            border-radius: 5px 12px 5px 5px;
+            padding: 0px 5px;
+
+            >input {
+                border: none;
+                font-size: 18px;
+                width: 100%;
+            }
+
+            >input:focus {
+                outline: none;
+            }
+        }
+    }
+
+    >img {
+        height: 20px;
+        align-self: end;
+    }
+}
+
+.setEndDateArea {
+    display: flex;
+
+    & img {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.dropdownMenuSite:has(.open) {
+    >button {
+        >img {
+            transition: all 0.5s ease-in-out;
+            transform: rotateZ(180deg);
+        }
+    }
+}
+
+
+.dropdownMenuSite {
+    display: block;
+    padding-top: 15px;
+
+    >button {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 4px 6px 4px 10px;
+        border-radius: 6px;
+        border-color: transparent;
+        height: 32px;
+        width: 206px;
+        font-size:16px;
+        color: white;
+        background-color: transparent;
+        cursor: pointer;
+        font-family: 'Mulish', sans-serif;
+        >img {
+            transition: all 0.5s ease-in-out;
+            transform: rotateZ(0deg);
+        }
+
+        &:hover {
+            background-color: rgba(73, 59, 77, 1);
+
+            >img {
+                content: url('../../../assets/arrow_drop_downYellow.svg');
+            }
+        }
+
+    }
+
+    .dropDownList.open {
+        background-color: white;
+        >.dropDownItem {
+            color:black;
+            pointer-events: all;
+            cursor: pointer;
+        }
+    }
+
+    .dropDownItem {
+        display: flex;
+        pointer-events: none;
+        justify-content: start;
+        align-items: center;
+        padding: 4px 6px 4px 6px;
+        border-radius: 6px;
+        border-color: transparent;
+        height: 28px;
+        width: 195px;
+        color: white;
+        background-color: transparent;
+        cursor: pointer;
+
+        &:hover {
+            background-color:rgba(244, 233, 251, 1);
+        }
+    }
+
+    >.dropDownList {
+        z-index: 1;
+        height: 0px;
+        width: 206px;
+        opacity: 0;
+        background-color: rgb(180, 145, 69);
+        transition: all 0.3s ease-in-out;
+        position: absolute;
+        // cursor: pointer;
+        &.open {
+            position: absolute;
+            height: 300px;
+
+            z-index: 2;
+            transition: all 0.5s ease-in-out;
+            animation: animatOpacity 1s ease-in-out 0s forwards;
+        }
+    }
+}
+
+@keyframes animatOpacity {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.inputFieldSite {
+    >p {
+        font-family: 'Mulish', sans-serif;
+        color: white;
+        align-self: center;
+        margin-top: 2px;
+        font-size: 18px;
+    }
+
+    >img {
+        height: 20px;
+        align-self: end;
+    }
+
+    >.setEndDateInputAndImg {
+        display: flex;
+        align-items: center;
+        width: 222px;
+        gap: 8px;
+
+        >img:hover {
+            cursor: pointer;
+            content: url('../../../assets/icons/deleteIcon_hover.svg');
+        }
+
+        >.setEndDateInput {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            width: 222px;
+            height: 37px;
+            border-radius: 5px 20px 5px 5px;
+
+            & input {
+                border: none;
+            }
+
+            & input:focus {
+                outline: none;
+            }
+
+            & input::-webkit-datetime-edit {
+                color: rgb(15, 10, 10);
+            }
+        }
+
+    }
+}
+
+
+.descriptionAria {
+    width: 452px;
+    height: 178px;
+
+    >p {
+        font-family: 'Mulish', sans-serif;
+        margin: 10px;
+        color: white;
+        font-size: 18px;
+    }
+
+    >.textareaAndImg {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+
+        >img:hover {
+            cursor: pointer;
+            content: url('../../../assets/icons/deleteIcon_hover.svg');
+        }
+
+        >.descriptionInput {
+            width: 418px;
+            min-width: 0px;
+            height: 132px;
+
+            >.descriptionError {
+                margin: 5px 0px 0px 5px;
+                width: 80%;
+                color: red;
+            }
+
+            >textarea {
+                font-family: 'Mulish', sans-serif;
+                width: 415px;
+                height: 100%;
+                border-radius: 5px 20px 5px 5px;
+                font-size: 18px;
+            }
+
+            >textarea:focus {
+                outline: none;
+            }
+        }
+    }
+}
+
+.headlineAndImg {
+    display: flex;
+    justify-content: space-between;
+    width: 429px;
+
+    >img:hover {
+        cursor: pointer;
+        content: url('../../../assets/icons/deleteIcon_hover.svg');
+    }
+
+    >.question {
+        font-family: 'Mulish', sans-serif;
+        font-size: 18px;
+        color: white;
+    }
+}
+
+.questionArea {
+
+    >.questionError {
+        min-height: 20px;
+        margin: 8px 0px 0px 0px;
+        width: 80%;
+        color: red;
+    }
+}
+
+.questionInput {
+    display: flex;
+    align-items: center;
+    max-width: 429px;
+    height: 38px;
+    border-radius: 5px 12px 5px 5px;
+    padding: 0px 5px;
+    background-color: white;
+    box-sizing: border-box;
+
+    >input {
+        border: none;
+        font-size: 18px;
+        color: black;
+        width: 100%;
+    }
+
+    >input:focus {
+        outline: none;
+    }
+}
+
+.answerHeadlineAndSetting {
+    display: flex;
+    width: 429px;
+
+    >p {
+        color: white;
+        font-family: 'Mulish', sans-serif;
+        font-size: 18px;
+        margin-top: 8px;
+    }
+}
+
+.checkboxAndPtag {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 429px;
+
+    >p {
+        color: white;
+        font-family: 'Mulish', sans-serif;
+        font-size: 16px;
+    }
+    input[type="checkbox"]:checked {
+        appearance: none;
+        --webkit-appearance: none;
+        
+        content: url('../../../assets/input_checked.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        width: 15px;
+        height: 15px;
+        
+    }
+}
+
+.answerBox {
+    display: flex;
+    width: 425px;
+    margin-bottom: 8px;
+
+    >img:hover {
+        cursor: pointer;
+        content: url('../../../assets/icons/deleteIcon_hover.svg');
+    }
+
+    >.count {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        font-family: 'Mulish', sans-serif;
+        color: white;
+        margin-right: 3.5px;
+    }
+
+    >.answerInput {
+        display: flex;
+        align-items: center;
+        width: 400px;
+        height: 38px;
+        border-radius: 5px 12px 5px 5px;
+        padding: 0px 5px;
+        background-color: white;
+        box-sizing: border-box;
+        margin-right: 6px;
+
+        >input {
+            width: 290px;
+            border: none;
+            font-size: 18px;
+            color: black;
+        }
+
+        >input:focus {
+            outline: none;
+        }
+    }
+}
+
+.answerError {
+    margin: 5px 0px 5px 30px;
+    min-height: 20px;
+    width: 80%;
+    color: red;
+}
+
+
+.addLink {
+    margin-left: 30px;
+    margin-top: 10px;
+    border-bottom: transparent;
+    text-decoration: underline;
+    border-top:transparent;
+    border-left:transparent;
+    border-right:transparent;
+    // text-decoration: none;
+    text-decoration-color: white;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    color: white;
+    font-family: 'Nokora', sans-serif;
+    font-size: 16px;
+    // border-bottom: 2px solid white;
+    padding: 5px 5px;
+    cursor: pointer;
+    background-color: transparent;
+    >.addLinkImg{
+        width:14px;
+        height:14px;
+        
+    }
+    &:hover {
+        background-color: rgba(250, 245, 254, 0.2);
+    }
+}
+
+.addQuestionButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 195px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgb(123, 90, 84);
+    border: 1px solid rgb(123, 90, 84);
+    color: white;
+    font-family: 'Nokora', sans-serif;
+    font-size: 16px;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgb(150, 117, 112);
+    }
+}
+
+.successMessage{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position:absolute;
+    top:40%;
+    right:-100%;
+    // transform: translateX(-100%);
+    gap: 38px;
+    width: 357px;
+    height: 86px;
+    z-index: 3;
+    border-radius: 5px 50px 5px 5px;
+    background-color: rgba(254, 233, 212, 1);
+    border: 1px solid rgb(123, 90, 84);
+    color:black;
+    font-family: 'Nerko One', sans-serif;
+    padding: 8px 32px;
+    box-sizing: border-box;
+    >.text{
+        font-size: 24px;
+        
+    }
+    >.closeButton{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top:10px;
+        cursor: pointer;
+        align-self: start;
+        padding:5px;
+        background-color: rgba(254, 233, 212, 1);
+        &:hover{
+            border-radius:10px;
+            background-color:rgb(177, 174, 173);
+        }
+}
+}
+.successMessage.visible{
+    transform: translateX(0%);
+    right:30%;
+    display:flex;
+    transition: right 1.5s  ease-in-out;
+}
+
+
+@media(max-width:1126px) {
+    .mainDataOfSurvey {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        height: 100%;
+    }
+    .newSurveyWrapper{
+        max-height: 100%;
+    }
+}
+
+@media(max-width:1100px) {
+    .mainDataOfSurvey {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        width: 100%;
+        justify-items: center;
+        row-gap: 16px;
+        scrollbar-width: thin;
+        scrollbar-color: rgb(255, 183, 112) transparent;
+    }
+
+    .descriptionAria {
+        margin-left: -15px;
+    }
+
+    .questionArea {
+        margin-left: -35px;
+    }
+    
+}
+
+@media(max-width:680px) {
+    .headlineButtonAria {
+
+        >.headline {
+            font-size: 40px;
+        }
+        .cancelButton{
+            display:none;
+        }
+    }
+    .newSurveyWrapper{
+        height:100%;
+        >.statusCloseArea{
+            
+            .cancelButtonMobile{
+                display:flex;
+            }
+        }
+    }
+    
+    
+}
+
+@media(max-width:666px) {
+    .surveyNameAria {
+        width: 97%;
+    }
+
+    .descriptionAria {
+        width: unset;
+       
+        gap: 5px;
+
+        >.textareaAndImg {
+            gap: 5px;
+        }
+    }
+
+    #description {
+        width: 97%;
+    }
+
+    .newSurveyWrapper {
+        padding: 40px 20px;
+        height:100%;
+    }
+
+    .newSurveyForm {
+        padding: 33px 20px;
+        // height:100%;
+    }
+
+    .successMessage{
+        width: 300px;
+        padding: 8px 20px;
+        // font-size: 20px;
+        >.text{
+            font-size: 20px;
+        }
+    }
+
+}
+
+@media(max-width:560px) {
+    .surveyNameAria {
+        width: 100%;
+    }
+    .newSurveyWrapper{
+        padding: 40px 10px;
+        border-top-right-radius: 50px;
+        // height:calc(100% - 90px);
+    }
+    .newSurveyForm{
+        padding: 33px 10px;
+        border-top-right-radius: 40px;
+    }
+
+    .mainDataOfSurvey {
+        >.nameDateAria {
+            width: 95%;
+            height:100%;
+        }
+    }
+
+    .descriptionAria {
+        width: 95%;
+        margin-left: 0px;
+    }
+
+    .questionArea {
+        width: 95%;
+        margin-left: -5px;
+
+        >.headlineAndImg {
+            width: 95%;
+        }
+
+        >.answerHeadlineAndSetting {
+            width: 95%;
+        }
+
+        >.questionInput {
+            width: 95%;
+        }
+
+        >.answerBox {
+            width: 95%;
+
+            >.answerInput {
+                width: 86%;
+
+                >input {
+                    width: 90%;
+                }
+
+            }
+        }
+    }
+    .successMessage{
+        width: 250px;
+        padding: 8px 20px;
+        gap:10px;
+        >.text{
+            font-size: 18px;
+        }
+    }
+    .successMessage.visible{
+        right:12%;
+    }
+
+    .newSurveyForm {
+        margin-left: 0px;
+        padding: 33px 5px;
+    }
+}
+
+@media(max-width:503px) {
+    .setEndDateArea {
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
+
+    .mainDataOfSurvey {
+        >.nameDateAria {
+            grid-row: span 3;
+        }
+
+        row-gap:23px;
+    }
+    .descriptionAria{
+        margin-left:0px;
+    }
+    .headlineButtonAria{
+        >.headline{
+            font-size: 30px;
+        }
+    }
+    
+}
+
+@media(max-width:380px){
+    .checkboxAndPtag{
+        >p{
+            font-size:14px;
+            width:120px;
+            text-wrap:balance;
+            margin-right:-10px;
+        }
+    }
+    .setEndDateInputAndImg{
+        margin-left:1px;
+    } 
+    // .newSurveyWrapper{
+    //     max-height: calc(100% - 90px);
+    // }
+}

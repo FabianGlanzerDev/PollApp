@@ -1,0 +1,110 @@
+<section class="mainWrapper">
+    <div class="successMessageSubmitt">
+        <div class="text">
+            Successfully submitted
+
+        </div>
+        <div (click)="hideSuccessMessageSubmitt()" class="closeButton"><img src="assets/icons/close_black.svg"></div>
+    </div>
+    <div class="headLogoButtonArea">
+        <img [routerLink]="['/']" src="assets/pollAppLogo_dark.svg">
+        <button class="createButton" [routerLink]="['/newSurvey']">New Survey<img
+                src="assets/icons/plus_symbolBlack.svg"></button>
+    </div>
+    <div class="surveyStatisticWrapper">
+        <div class="surveyWrapperLeftSide">
+            <div class="statusCloseArea">
+                <p class="statusOfSurvey">Published</p>
+                <button routerLink="/" class="closeSurvey"><img src="assets/icons/black_closeButton.svg"></button>
+            </div>
+            <div class="mainSurvey">
+                @if(survey) {
+                <div class="deadlineCategoryWrapper">
+                    <p class="deadlineOfSurvey">Deadline: {{ survey.deadline }}</p>
+                    <p class="allreadyFilledClass" [style]="allreadyFilled.some(a => a.id === survey?.id) ||
+                        expired || nothingFilledOutyet
+                     ? 'opacity: 1' : 'opacity: 0' ">
+                    @if(allreadyFilled.some(a => a.id === survey?.id)) {
+                    <p class="allreadyFilled">-- allready filled out --</p>
+                    }@else if(expired) {
+                    <p class="allreadyFilled">Survey has allready ended</p>
+                    }
+                    @if(nothingFilledOutyet === true) {
+                    <p class="allreadyFilled">-- nothing filled out yet --</p>
+                    }
+                    </p>
+                    <p class="categoryOfSurvey">Category: {{ survey.category }}</p>
+                </div>
+                <div class="mainSurveyHeadline">{{ survey.title }}</div>
+                <div class="mainSurveyDescription">{{ survey.description }}</div>
+                <div class="questionAnswerWrapper">
+                    @for (question of questions; track question.id) {
+                    <div class="questionWrapper">
+                        <div class="question">
+                            <p>{{ $index + 1 }} {{ question.question }} </p>
+                            @if(question.allowMultipleAnswers) {
+                            <p class="multipleAnswers">Multiple answers allowed</p>
+                            }@else {
+                            <p class="multipleAnswers"></p>
+                            }
+                        </div>
+                        @for (answer of question.answers; track $index) {
+                        <div class="answer">
+                            <input
+                                (click)="preventMultipleAnswers($event, question); collectAnswerIds($event, question, answer.id);"
+                                type="checkbox"
+                                [disabled]="allreadyFilled.some(a => a.id === survey?.id) || 
+                                expired">
+                            <p class="count"  >{{ letter[$index] }}.</p>
+                            <p> {{ answer.answer }}</p>
+
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            <button [disabled]="allreadyFilled.some(a => a.id === survey?.id) || expired" class="completeSurveyButton" (click)="submittDelay()">Complete survey</button>
+            <div class="errorMessageSubmitt">Please fill out all questions</div>
+        </div>
+        @if(innerWidth < 1080) {
+            <button (click)="toggleStatistics()" class="statisticsButton"><label>Close results</label><img src="assets/icons/resultsArrowMobile.svg"><img src="assets/icons/yelloArroUp.svg"></button>
+        }
+        <div class="statisticsWrapperRightSide">
+            @if(surveysData.statistics().length > 0 || this.choosenAnswerArray.length > 0) {
+            <h2>Survey Statistics <p class="live">&nbsp; Live </p>&nbsp;<p class="point">.</p>
+            </h2>
+            <p>allready <b>{{ this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 :
+                    computedStatistics().xTimesSurveyFilled }}</b> participants filled this survey</p>
+            @for(question of questions; track question.id) {
+            <p>{{ $index + 1 }} {{ question.question }} </p>
+            @for (answer of question.answers; track $index) {
+
+            <p class="diagram">{{ letter[$index] }}.<svg width="255" height="14" viewBox="0 0 255 14"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <!-- Hintergrund -->
+                    <rect x="0" y="0" width="255" height="14" rx="10" fill="#e5e7eb" />
+
+                    <!-- Fortschritt: hier z. B. 60% -->
+                    <rect x="0" y="0" style="transition: width 0.4s ease-in-out;" [attr.width]="(computedStatistics().idsOfAnswer.includes(answer.id) || this.choosenAnswerArray.some(a => a.answer_id === answer.id))
+      ? (((computedStatistics().idsOfAnswer.filter((id) => id === answer.id).length + this.choosenAnswerArray.filter((item) => item.answer_id === answer.id).length)
+       / (this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 : computedStatistics().xTimesSurveyFilled)) * 255)
+      : 0" height="14" rx="10" fill="#ffb770" />
+                </svg> <b>{{ computedStatistics().idsOfAnswer.includes(answer.id) || this.choosenAnswerArray.some(a =>
+                    a.answer_id === answer.id) ?
+                    (((computedStatistics().idsOfAnswer.filter((id) => id === answer.id).length +
+                    this.choosenAnswerArray.filter((item) => item.answer_id === answer.id).length) /
+                    (this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 :
+                    computedStatistics().xTimesSurveyFilled)) * 100).toFixed(0)
+                    : 0 }}%</b></p>
+            }
+            }
+            } @else{
+            <h2>Survey Statistics <p class="live">&nbsp; Live</p>
+            </h2>
+            <p class="statisticsDescription">Results will be shown here after<br> participants complete the survey.</p>
+            <p class="noAnswers">there are no answers yet</p>}
+        </div>
+    </div>
+</section>

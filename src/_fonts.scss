@@ -1,0 +1,49 @@
+
+
+// @font-face {
+//     font-family: 'Nokora';
+//     src: url('/fonts/Nokora/static/Nokora-Regular.ttf');
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: 'Mulish';
+//     src: url('/fonts/Mulish/Mulish-Regular.ttf');
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: 'Nerko One';
+//     src: url('/fonts/Nerko_One/NerkoOne-Regular.ttf');
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+/* nokora-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Nokora';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../src/assets/fonts/nokora-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* mulish-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../src/assets/fonts/mulish-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* nerko-one-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Nerko One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../src/assets/fonts/nerko-one-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
