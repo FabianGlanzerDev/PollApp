@@ -1,11 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'styles/fonts';
+@use 'styles/variables' as *;
 @use './app/app.scss';
-@use './_fonts.scss';
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-body{
-    background-color: rgb(53,38,58);
-    // margin: 0 auto;
-    // padding:0px;
-    
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: $color-primary-purple;
+  color: $color-white;
+  font-family: $font-body;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
