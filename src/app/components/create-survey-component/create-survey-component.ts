@@ -313,7 +313,7 @@ async uploadMainSurveyData(){
   categorySelected(category: string) {
     this.category.setValue(category);
     this.document.querySelectorAll('.dropdownButton')?.forEach((button: Element) =>
-      button.innerHTML = `${category}<img src=\"assets/arrow_drop_down.svg\">`
+      button.innerHTML = `${category}<img src=\"assets/icons/arrow-drop-down.svg\">`
 
     );
     this.toggleDropDown();

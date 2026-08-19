@@ -4,7 +4,7 @@
             Your Survey is now<br> published
     
         </div>
-        <div (click)="hideSuccessMessage()" class="closeButton"><img src="assets/icons/close_black.svg"></div>
+        <div (click)="hideSuccessMessage()" class="closeButton"><img src="assets/icons/close-black.svg"></div>
     </div>
     <div class="statusCloseArea">
         <p class="firstPTag">Draft</p>
@@ -23,7 +23,7 @@
                         <div class="surveyNameInput">
                             <input type="text" id="surveyName" [formControl]="surveyName">
                         </div>
-                        <img src="assets/icons/Delete.svg" (click)="surveyName.setValue('')">
+                        <img src="assets/icons/delete.svg" (click)="surveyName.setValue('')">
                     </div>
                     @if(surveyName.invalid && surveyName.touched){
                     <p class="surveyNameError">Survey name is required</p>
@@ -38,12 +38,12 @@
                             <div class="setEndDateInput">
                                 <input type="date" min="{{ today | date: 'yyyy-MM-dd'}}" id="date" [formControl]="endDate">
                             </div>
-                            <img src="assets/icons/Delete.svg" (click)="endDate.setValue('tt/mm/jjjj')">
+                            <img src="assets/icons/delete.svg" (click)="endDate.setValue('tt/mm/jjjj')">
                         </div>
                     </div>
                     <div (click)="stopThePropagation($event)" class="dropdownMenuSite">
                         <button (click)="toggleDropDown()" class="dropdownButton">Select category<img
-                                src="assets/arrow_drop_down.svg"></button>
+                                src="assets/icons/arrow-drop-down.svg"></button>
                         <div [class.open]="isDropdownOpen" class="dropDownList">
                             @for (category of categoryArray; track category; let i = $index){
                             <div class="dropDownItem" (click)="categorySelected(category)">{{ category }}</div>
@@ -61,7 +61,7 @@
                         <p class="descriptionError">Description is required</p>
                         }
                     </div>
-                    <img src="assets/icons/Delete.svg" (click)="description.setValue('')">
+                    <img src="assets/icons/delete.svg" (click)="description.setValue('')">
                 </div>
             </div>
             @if (questions.length > 0) {
@@ -69,7 +69,7 @@
             <div class="questionArea">
                 <div class="headlineAndImg">
                     <p class="question">{{ $index + 1 }}. Question</p>
-                    <img src="assets/icons/Delete.svg" (click)="questions.removeAt($index)">
+                    <img src="assets/icons/delete.svg" (click)="questions.removeAt($index)">
                 </div>
                 <div class="questionInput">
                     <input type="text" id="question" [formControl]="asFormControl(questionGroup.get('question'))">
@@ -94,7 +94,7 @@
                     <div class="answerInput">
                         <input type="text" id="answer" [formControl]="answer">
                     </div>
-                    <img src="assets/icons/Delete.svg" (click)="deleteAnswer(qIndex, aIndex)">
+                    <img src="assets/icons/delete.svg" (click)="deleteAnswer(qIndex, aIndex)">
                 </div>
                 @if(answer.invalid && answer.touched){
                 <p class="answerError">Answer is required</p>
@@ -106,14 +106,14 @@
 
 
                 <button (click)="addAnswer($index)" class="addLink" type="button">Add answer <img class="addLinkImg"
-                        src="assets/icons/add_circle.svg"></button>
+                        src="assets/icons/add-circle.svg"></button>
                 
             </div>
             }}
             <button (click)="addQuestion()" type="button" class="addQuestionButton">Add question <img
-                    src="assets/icons/add_circle.svg"></button>
+                    src="assets/icons/add-circle.svg"></button>
         </div>
     </div>
     <button class="publishButton" type="submit" (click)="submit()">Publish<img
-            src="assets/icons/publish_check.svg"></button>
+            src="assets/icons/publish-check.svg"></button>
 </div>

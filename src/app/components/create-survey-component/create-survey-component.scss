@@ -207,7 +207,7 @@ body.survey-body {
 
         >img:hover {
             cursor: pointer;
-            content: url('../../../assets/icons/deleteIcon_hover.svg');
+            content: url('../../../assets/icons/delete-hover.svg');
         }
 
         >.surveyNameInput {
@@ -284,7 +284,7 @@ body.survey-body {
             background-color: rgba(73, 59, 77, 1);
 
             >img {
-                content: url('../../../assets/arrow_drop_downYellow.svg');
+                content: url('../../../assets/icons/arrow-drop-down-hover.svg');
             }
         }
 
@@ -370,7 +370,7 @@ body.survey-body {
 
         >img:hover {
             cursor: pointer;
-            content: url('../../../assets/icons/deleteIcon_hover.svg');
+            content: url('../../../assets/icons/delete-hover.svg');
         }
 
         >.setEndDateInput {
@@ -417,7 +417,7 @@ body.survey-body {
 
         >img:hover {
             cursor: pointer;
-            content: url('../../../assets/icons/deleteIcon_hover.svg');
+            content: url('../../../assets/icons/delete-hover.svg');
         }
 
         >.descriptionInput {
@@ -453,7 +453,7 @@ body.survey-body {
 
     >img:hover {
         cursor: pointer;
-        content: url('../../../assets/icons/deleteIcon_hover.svg');
+        content: url('../../../assets/icons/delete-hover.svg');
     }
 
     >.question {
@@ -522,7 +522,7 @@ body.survey-body {
         appearance: none;
         --webkit-appearance: none;
         
-        content: url('../../../assets/input_checked.svg');
+        content: url('../../../assets/icons/input-checked.svg');
         background-size: contain;
         background-repeat: no-repeat;
         width: 15px;
@@ -538,7 +538,7 @@ body.survey-body {
 
     >img:hover {
         cursor: pointer;
-        content: url('../../../assets/icons/deleteIcon_hover.svg');
+        content: url('../../../assets/icons/delete-hover.svg');
     }
 
     >.count {

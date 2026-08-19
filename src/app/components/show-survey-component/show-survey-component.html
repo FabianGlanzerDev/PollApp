@@ -4,18 +4,18 @@
             Successfully submitted
 
         </div>
-        <div (click)="hideSuccessMessageSubmitt()" class="closeButton"><img src="assets/icons/close_black.svg"></div>
+        <div (click)="hideSuccessMessageSubmitt()" class="closeButton"><img src="assets/icons/close-black.svg"></div>
     </div>
     <div class="headLogoButtonArea">
-        <img [routerLink]="['/']" src="assets/pollAppLogo_dark.svg">
+        <img [routerLink]="['/']" src="assets/images/logo-dark.svg">
         <button class="createButton" [routerLink]="['/newSurvey']">New Survey<img
-                src="assets/icons/plus_symbolBlack.svg"></button>
+                src="assets/icons/plus-black.svg"></button>
     </div>
     <div class="surveyStatisticWrapper">
         <div class="surveyWrapperLeftSide">
             <div class="statusCloseArea">
                 <p class="statusOfSurvey">Published</p>
-                <button routerLink="/" class="closeSurvey"><img src="assets/icons/black_closeButton.svg"></button>
+                <button routerLink="/" class="closeSurvey"><img src="assets/icons/close-button-black.svg"></button>
             </div>
             <div class="mainSurvey">
                 @if(survey) {
@@ -69,7 +69,7 @@
             <div class="errorMessageSubmitt">Please fill out all questions</div>
         </div>
         @if(innerWidth < 1080) {
-            <button (click)="toggleStatistics()" class="statisticsButton"><label>Close results</label><img src="assets/icons/resultsArrowMobile.svg"><img src="assets/icons/yelloArroUp.svg"></button>
+            <button (click)="toggleStatistics()" class="statisticsButton"><label>Close results</label><img src="assets/icons/results-arrow-mobile.svg"><img src="assets/icons/arrow-up-yellow.svg"></button>
         }
         <div class="statisticsWrapperRightSide">
             @if(surveysData.statistics().length > 0 || this.choosenAnswerArray.length > 0) {
