@@ -1,24 +1,5 @@
-<!-- <p>home-view-component works!</p>
-<h2>Hello world</h2> -->
 <section (click)="toggleOnlyClose()" class="main-section">
-    <div class="logoDivv"><img src="assets/images/logo.svg"></div>
-    <div class="textInfoImgDiv">
-        <div class="leftSideText">
-            <h4>Collect Feedback, <br>
-                Unlock Ideas
-            </h4>
-        <div class="smartphoneImgResponsive">
-            <img src="assets/images/smartphone.svg">
-            
-        </div>    
-            <p>Create and share surveys in minutes – from team events to workplace culture. Collect opinions, engage your audience, and turn feedback into action.</p>
-            <button [routerLink]="['newSurvey']">New survey<img src="assets/icons/plus-black.svg"></button>
-        </div>
-        <div class="rightSideImg">
-            <img class="standardImg" src="assets/images/smartphone.svg">
-            <img class="hoverImg" src="assets/images/smartphone-hover.svg">
-        </div>
-    </div>
+    <app-hero />
     <div class="survey-section">
         <div class="headline">Your Surveys</div>
         <div class="middle">Ending soon surveys</div>

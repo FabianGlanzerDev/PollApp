@@ -1,3 +1,4 @@
-@forward './components/home-view-component/home-view-component.scss';
-@forward './components/create-survey-component/create-survey-component.scss';
-@forward './components/show-survey-component/show-survey-component.scss';
+:host {
+  display: block;
+  min-height: 100vh;
+}

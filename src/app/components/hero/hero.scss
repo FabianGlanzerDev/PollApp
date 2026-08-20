@@ -1,0 +1,161 @@
+@use '../../../styles/variables' as *;
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 426px;
+  grid-template-areas:
+    'heading image'
+    'content image';
+  column-gap: clamp(56px, 10vw, 180px);
+  width: min(calc(100% - 64px), $content-width);
+  margin: 56px auto 90px;
+  align-items: center;
+}
+
+h1 {
+  grid-area: heading;
+  margin: 0 0 32px;
+  color: $color-primary-orange;
+  font-family: $font-heading;
+  font-weight: 400;
+  line-height: 0.9;
+
+  span {
+    display: block;
+    font-size: clamp(72px, 6.7vw, 100px);
+    white-space: nowrap;
+  }
+}
+
+.hero-content {
+  grid-area: content;
+  align-self: start;
+
+  p {
+    max-width: 620px;
+    margin: 0 0 24px;
+    color: $color-white;
+    font-family: $font-body;
+    font-size: 24px;
+    line-height: 1.45;
+  }
+}
+
+.new-survey-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 48px;
+  padding: 0 20px;
+  overflow: hidden;
+  border: 0;
+  border-radius: $radius-medium;
+  background: $color-secondary-orange;
+  color: #221227;
+  font-family: $font-body;
+  font-size: 18px;
+  font-weight: 700;
+  transition: background-color 180ms ease;
+
+  .plus-icon {
+    display: flex;
+    width: 0;
+    margin-left: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: width 180ms ease, margin-left 180ms ease, opacity 140ms ease;
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  &:hover {
+    background: $color-primary-orange;
+  }
+
+  &:hover .plus-icon {
+    width: 24px;
+    margin-left: 12px;
+    opacity: 1;
+  }
+}
+
+.smartphone {
+  grid-area: image;
+  position: relative;
+  width: 426px;
+  height: 420px;
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 426px;
+    height: 420px;
+    transition: opacity 220ms ease;
+  }
+
+  .smartphone-hover {
+    opacity: 0;
+  }
+
+  &:hover .smartphone-default {
+    opacity: 0;
+  }
+
+  &:hover .smartphone-hover {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    column-gap: 40px;
+  }
+
+  .hero-content p {
+    font-size: 20px;
+  }
+
+  .smartphone,
+  .smartphone img {
+    width: 320px;
+    height: 316px;
+  }
+}
+
+@media (max-width: 735px) {
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'heading' 'image' 'content';
+    width: min(calc(100% - 40px), $content-width);
+    margin-top: 44px;
+  }
+
+  h1 span {
+    font-size: clamp(50px, 14vw, 72px);
+    white-space: normal;
+  }
+
+  .smartphone {
+    justify-self: center;
+    margin: 24px 0;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .new-survey-button {
+    margin: 32px auto 0;
+  }
+
+  .new-survey-button .plus-icon {
+    width: 24px;
+    margin-left: 12px;
+    opacity: 1;
+  }
+}

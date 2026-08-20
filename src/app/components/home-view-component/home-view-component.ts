@@ -14,13 +14,14 @@
 import { Component, Inject, inject, computed, signal } from '@angular/core';
 import { Surveys } from '../../services/surveys';
 import { RouterLink } from '@angular/router';
+import { Hero } from '../hero/hero';
 import { DOCUMENT } from '@angular/common'
 import { Survey } from '../../interfaces/survey-interface';
 
 
 @Component({
   selector: 'app-home-view-component',
-  imports: [RouterLink],
+  imports: [RouterLink, Hero],
   templateUrl: './home-view-component.html',
   styleUrl: './home-view-component.scss',
 
