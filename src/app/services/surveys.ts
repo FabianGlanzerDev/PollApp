@@ -1,27 +1,21 @@
 import { Injectable, OnDestroy, signal } from '@angular/core';
 import { RealtimeChannel, createClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
-import { getDemoAnswers, getDemoQuestions, getDemoStatistics } from '../data/demo-survey-content';
-import { DEMO_SURVEYS } from '../data/demo-surveys';
 import {
   Answer,
   NewSurveyInput,
+  NewSurveyQuestion,
   Question,
   Survey,
   SurveySubmission,
   SurveyVote,
 } from '../interfaces/survey-interface';
+import { LocalBuildState, LocalSurveyStore } from './surveys.types';
 
 const LOCAL_VOTES_KEY = 'pollapp-local-votes';
 const LOCAL_SURVEYS_KEY = 'pollapp-local-surveys';
 const RESULT_CHANNEL = 'pollapp-result-updates';
 const SURVEY_CHANNEL = 'pollapp-survey-updates';
-
-type LocalSurveyStore = {
-  surveys: Survey[];
-  questions: Question[];
-  answers: Answer[];
-};
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -29,7 +23,7 @@ type LocalSurveyStore = {
  */
 export class Surveys implements OnDestroy {
   readonly supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-  readonly surveys = signal<Survey[]>(DEMO_SURVEYS);
+  readonly surveys = signal<Survey[]>([]);
   readonly questions = signal<Question[]>([]);
   readonly statistics = signal<SurveyVote[]>([]);
 
@@ -143,7 +137,7 @@ export class Surveys implements OnDestroy {
   private async setRelatedQuestions(id: number) {
     if (!this.isConfigured()) {
       const localQuestions = this.readLocalSurveyStore().questions.filter((question) => question.survey === id);
-      this.questions.set(localQuestions.length ? localQuestions : getDemoQuestions(id));
+      this.questions.set(localQuestions);
       return;
     }
     const { data } = await this.supabase.from('questionDetail').select('*').eq('survey', id);
@@ -155,7 +149,7 @@ export class Surveys implements OnDestroy {
   private async getRelatedAnswers(questionId: number): Promise<Answer[]> {
     if (!this.isConfigured()) {
       const localAnswers = this.readLocalSurveyStore().answers.filter((answer) => answer.question === questionId);
-      return localAnswers.length ? localAnswers : getDemoAnswers(questionId);
+      return localAnswers;
     }
     const { data } = await this.supabase.from('answerDetail').select('*').eq('question', questionId);
     return (data ?? []) as Answer[];
@@ -175,20 +169,23 @@ export class Surveys implements OnDestroy {
 
   private createLocalSurvey(input: NewSurveyInput) {
     const store = this.readLocalSurveyStore();
-    const surveyId = this.nextId([...DEMO_SURVEYS, ...store.surveys]);
+    const surveyId = this.nextId(store.surveys);
     const survey = this.toSurvey(surveyId, input);
     const built = this.buildLocalQuestions(surveyId, input, store);
+    this.persistLocalSurvey(store, survey, built);
+    return survey;
+  }
 
-    const nextStore: LocalSurveyStore = {
+
+  private persistLocalSurvey(store: LocalSurveyStore, survey: Survey, built: Pick<LocalSurveyStore, 'questions' | 'answers'>) {
+    const nextStore = {
       surveys: [...store.surveys, survey],
       questions: [...store.questions, ...built.questions],
       answers: [...store.answers, ...built.answers],
     };
-
     localStorage.setItem(LOCAL_SURVEYS_KEY, JSON.stringify(nextStore));
     this.refreshLocalSurveys();
     this.surveyChannel?.postMessage('refresh');
-    return survey;
   }
 
 
@@ -206,29 +203,30 @@ export class Surveys implements OnDestroy {
 
 
   private buildLocalQuestions(surveyId: number, input: NewSurveyInput, store: LocalSurveyStore) {
-    let questionId = this.nextId(store.questions);
-    let answerId = this.nextId(store.answers);
-    const questions: Question[] = [];
-    const answers: Answer[] = [];
+    const state: LocalBuildState = {
+      questionId: this.nextId(store.questions),
+      answerId: this.nextId(store.answers),
+      questions: [],
+      answers: [],
+    };
+    input.questions.forEach((entry) => this.appendLocalQuestion(surveyId, entry, state));
+    return { questions: state.questions, answers: state.answers };
+  }
 
-    for (const entry of input.questions) {
-      const currentQuestionId = questionId++;
-      const questionAnswers = entry.answers.map((answer) => ({
-        id: answerId++,
-        answer,
-        question: currentQuestionId,
-      }));
-      answers.push(...questionAnswers);
-      questions.push({
-        id: currentQuestionId,
-        question: entry.questionText,
-        allowMultipleAnswers: entry.allowMultiple,
-        answers: questionAnswers,
-        survey: surveyId,
-      });
-    }
 
-    return { questions, answers };
+  private appendLocalQuestion(surveyId: number, entry: NewSurveyQuestion, state: LocalBuildState) {
+    const questionId = state.questionId++;
+    const answers = entry.answers.map((answer) => this.toLocalAnswer(questionId, answer, state));
+    state.answers.push(...answers);
+    state.questions.push({
+      id: questionId, question: entry.questionText, allowMultipleAnswers: entry.allowMultiple,
+      answers, survey: surveyId,
+    });
+  }
+
+
+  private toLocalAnswer(questionId: number, answer: string, state: LocalBuildState): Answer {
+    return { id: state.answerId++, answer, question: questionId };
   }
 
 
@@ -240,32 +238,41 @@ export class Surveys implements OnDestroy {
 
 
   private async createRemoteSurvey(input: NewSurveyInput) {
-    const surveyResponse = await this.supabase.from('surveyDetail').insert({
-      title: input.title,
-      deadline: input.deadline,
-      category: input.category,
-      description: input.description,
-    }).select().single();
-    if (surveyResponse.error || !surveyResponse.data) throw surveyResponse.error;
-
-    const surveyId = Number(surveyResponse.data.id);
-    const questionPayload = input.questions.map((entry) => ({
-      survey: surveyId,
-      question: entry.questionText,
-      allowMultipleAnswers: entry.allowMultiple,
-    }));
-    const questionResponse = await this.supabase.from('questionDetail').insert(questionPayload).select();
-    if (questionResponse.error || !questionResponse.data) throw questionResponse.error;
-
-    const answerPayload = input.questions.flatMap((entry, index) => {
-      const questionId = Number(questionResponse.data[index].id);
-      return entry.answers.map((answer) => ({ question: questionId, answer }));
-    });
-    const answerResponse = await this.supabase.from('answerDetail').insert(answerPayload);
-    if (answerResponse.error) throw answerResponse.error;
-
+    const survey = await this.insertRemoteSurvey(input);
+    const questionIds = await this.insertRemoteQuestions(survey.id, input.questions);
+    await this.insertRemoteAnswers(input.questions, questionIds);
     await this.getSurveys();
-    return surveyResponse.data as Survey;
+    return survey;
+  }
+
+
+  private async insertRemoteSurvey(input: NewSurveyInput): Promise<Survey> {
+    const payload = {
+      title: input.title, deadline: input.deadline, category: input.category,
+      description: input.description,
+    };
+    const response = await this.supabase.from('surveyDetail').insert(payload).select().single();
+    if (response.error || !response.data) throw response.error;
+    return response.data as Survey;
+  }
+
+
+  private async insertRemoteQuestions(surveyId: number, questions: NewSurveyQuestion[]) {
+    const payload = questions.map((entry) => ({
+      survey: surveyId, question: entry.questionText, allowMultipleAnswers: entry.allowMultiple,
+    }));
+    const response = await this.supabase.from('questionDetail').insert(payload).select('id');
+    if (response.error || !response.data) throw response.error;
+    return response.data.map((question) => Number(question.id));
+  }
+
+
+  private async insertRemoteAnswers(questions: NewSurveyQuestion[], questionIds: number[]) {
+    const payload = questions.flatMap((entry, index) =>
+      entry.answers.map((answer) => ({ question: questionIds[index], answer })),
+    );
+    const response = await this.supabase.from('answerDetail').insert(payload);
+    if (response.error) throw response.error;
   }
 
 
@@ -283,7 +290,7 @@ export class Surveys implements OnDestroy {
 
   private loadLocalStatistics(surveyId: number) {
     const customVotes = this.readLocalVotes().filter((vote) => vote.survey_id === surveyId);
-    this.statistics.set([...getDemoStatistics(surveyId), ...customVotes]);
+    this.statistics.set(customVotes);
     return this.statistics();
   }
 
@@ -291,7 +298,7 @@ export class Surveys implements OnDestroy {
 
   private refreshLocalSurveys() {
     const localSurveys = this.readLocalSurveyStore().surveys;
-    this.surveys.set([...DEMO_SURVEYS, ...localSurveys]);
+    this.surveys.set(localSurveys);
     return this.surveys();
   }
 
