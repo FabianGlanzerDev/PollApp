@@ -5,6 +5,9 @@ import { Question, Survey, SurveySubmission } from '../../interfaces/survey-inte
 import { Surveys } from '../../services/surveys';
 import { CreateSurveyComponent } from '../create-survey-component/create-survey-component';
 
+/**
+ * Maps each question id to the currently selected answer ids.
+ */
 type SelectedAnswers = Record<number, number[]>;
 
 const COMPLETED_SURVEYS_KEY = 'pollapp-completed-surveys';
@@ -15,6 +18,9 @@ const COMPLETED_SURVEYS_KEY = 'pollapp-completed-surveys';
   templateUrl: './show-survey-component.html',
   styleUrl: './show-survey-component.scss',
 })
+/**
+ * Displays a survey, handles voting and presents live result statistics.
+ */
 export class ShowSurveyComponent implements OnInit, OnDestroy {
   @ViewChild(CreateSurveyComponent) createSurveyModal?: CreateSurveyComponent;
 
@@ -39,18 +45,27 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Returns the survey currently selected by the route parameter.
+   */
   get survey(): Survey | undefined {
     return this.surveysData.surveys().find((survey) => survey.id === this.surveyId);
   }
 
 
 
+  /**
+   * Returns the questions loaded for the current survey.
+   */
   get questions() {
     return this.surveysData.questions();
   }
 
 
 
+  /**
+   * Indicates whether the survey deadline has passed.
+   */
   get expired() {
     if (!this.survey) return false;
     return Date.now() > new Date(`${this.survey.deadline}T23:59:59`).getTime();
@@ -58,12 +73,20 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Indicates whether the current user can still submit a vote.
+   */
   get canVote() {
     return Boolean(this.survey) && !this.expired && !this.alreadyCompleted();
   }
 
 
 
+  /**
+   * Loads survey content, completion state and current statistics for the route.
+   *
+   * @returns A promise that resolves when the survey data has been loaded.
+   */
   async ngOnInit() {
     this.document.body.classList.add('show-body');
     this.surveyId = Number(this.route.snapshot.paramMap.get('id') ?? 0);
@@ -77,6 +100,9 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Removes page-specific styling and clears a pending redirect timer.
+   */
   ngOnDestroy() {
     this.document.body.classList.remove('show-body');
     if (this.redirectTimer) window.clearTimeout(this.redirectTimer);
@@ -85,24 +111,40 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
   @HostListener('window:resize')
+  /**
+   * Updates the stored viewport width after a browser resize.
+   */
   onResize() {
     this.innerWidth.set(window.innerWidth);
   }
 
 
 
+  /**
+   * Opens the create-survey dialog from the survey detail page.
+   */
   openCreateSurvey() {
     this.createSurveyModal?.open();
   }
 
 
 
+  /**
+   * Toggles the visibility of the result section on smaller layouts.
+   */
   toggleResults() {
     this.resultsVisible.update((visible) => !visible);
   }
 
 
 
+  /**
+   * Updates the selected answer state for a question.
+   *
+   * @param question The question being answered.
+   * @param answerId Id of the changed answer.
+   * @param checked Whether the answer is selected.
+   */
   updateAnswer(question: Question, answerId: number, checked: boolean) {
     if (!this.canVote) return;
     const selections = { ...this.selectedAnswers() };
@@ -114,12 +156,24 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Checks whether an answer is selected for a question.
+   *
+   * @param questionId Id of the question.
+   * @param answerId Id of the answer.
+   * @returns True when the answer is currently selected.
+   */
   isSelected(questionId: number, answerId: number) {
     return this.selectedAnswers()[questionId]?.includes(answerId) ?? false;
   }
 
 
 
+  /**
+   * Validates the current choices and submits the completed survey.
+   *
+   * @returns A promise that resolves after the submission attempt finishes.
+   */
   async completeSurvey() {
     if (!this.canVote || this.submitting()) return;
     if (!this.everyQuestionAnswered()) return this.showMissingAnswers();
@@ -136,6 +190,12 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Calculates the participant percentage that selected an answer.
+   *
+   * @param answerId Id of the answer to evaluate.
+   * @returns Rounded percentage of participating submissions.
+   */
   answerPercentage(answerId: number) {
     const participants = this.participantCount();
     if (participants === 0) return 0;
@@ -146,6 +206,9 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Closes the success state by returning the user to the home page.
+   */
   hideSuccessMessage() {
     this.returnToHome();
   }
@@ -173,6 +236,11 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Converts all selected answers into database submission records.
+   *
+   * @returns Vote records ready to be persisted.
+   */
   private buildSubmission(): SurveySubmission[] {
     return this.questions.flatMap((question) =>
       (this.selectedAnswers()[question.id] ?? []).map((answerId) => ({
@@ -239,6 +307,11 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Counts unique submissions represented in the current statistics.
+   *
+   * @returns Number of unique survey participants.
+   */
   private countParticipants() {
     return new Set(this.surveysData.statistics().map((vote) => vote.submission_id)).size;
   }

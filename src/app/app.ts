@@ -8,4 +8,7 @@ import { Header } from './components/header/header';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
+/**
+ * Root component that hosts the global header and routed page content.
+ */
 export class App {}

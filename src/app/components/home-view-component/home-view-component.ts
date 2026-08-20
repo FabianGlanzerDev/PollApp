@@ -6,6 +6,9 @@ import { Surveys } from '../../services/surveys';
 import { CreateSurveyComponent } from '../create-survey-component/create-survey-component';
 import { Hero } from '../hero/hero';
 
+/**
+ * Available survey list views on the home page.
+ */
 type SurveyTab = 'active' | 'past';
 
 @Component({
@@ -14,6 +17,9 @@ type SurveyTab = 'active' | 'past';
   templateUrl: './home-view-component.html',
   styleUrl: './home-view-component.scss',
 })
+/**
+ * Coordinates the home page, survey tabs, category filters and create-survey dialog.
+ */
 export class HomeViewComponent {
   @ViewChild(CreateSurveyComponent) createSurveyModal?: CreateSurveyComponent;
 
@@ -34,19 +40,33 @@ export class HomeViewComponent {
   selectedCategory = 'All Surveys';
   dropdownOpen = false;
 
+  /**
+   * Provides access to the page document for home-specific body styling.
+   */
   constructor(@Inject(DOCUMENT) private readonly document: Document) {}
 
 
+  /**
+   * Applies the home page body class when the component is initialized.
+   */
   ngOnInit() {
     this.document.body.classList.add('home-body');
   }
 
 
+  /**
+   * Removes the home page body class when leaving the component.
+   */
   ngOnDestroy() {
     this.document.body.classList.remove('home-body');
   }
 
 
+  /**
+   * Returns up to three active surveys ending within the next 30 days.
+   *
+   * @returns The surveys with the nearest deadlines.
+   */
   get endingSoonSurveys(): Survey[] {
     const limit = this.addDays(this.startOfToday(), 30).getTime();
     return this.activeSurveys
@@ -55,6 +75,11 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Returns the surveys for the selected tab and category filter.
+   *
+   * @returns The currently visible survey list.
+   */
   get displayedSurveys(): Survey[] {
     const source = this.activeTab === 'active' ? this.activeSurveys : this.pastSurveys;
     if (this.selectedCategory === 'All Surveys') return source;
@@ -62,6 +87,11 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Returns active surveys ordered by their deadline.
+   *
+   * @returns Active surveys with the earliest deadline first.
+   */
   get activeSurveys(): Survey[] {
     const today = this.startOfToday().getTime();
     return [...this.surveysData.surveys()]
@@ -70,6 +100,11 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Returns expired surveys ordered from newest to oldest deadline.
+   *
+   * @returns Surveys whose deadline has already passed.
+   */
   get pastSurveys(): Survey[] {
     const today = this.startOfToday().getTime();
     return [...this.surveysData.surveys()]
@@ -78,6 +113,11 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Switches between active and past surveys and resets the category filter.
+   *
+   * @param tab The survey tab that should become active.
+   */
   setTab(tab: SurveyTab) {
     this.activeTab = tab;
     this.selectedCategory = 'All Surveys';
@@ -85,12 +125,23 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Opens or closes the category dropdown without propagating the click.
+   *
+   * @param event The triggering mouse event.
+   */
   toggleCategoryDropdown(event: MouseEvent) {
     event.stopPropagation();
     this.dropdownOpen = !this.dropdownOpen;
   }
 
 
+  /**
+   * Applies a category filter and closes the dropdown.
+   *
+   * @param category The category to display.
+   * @param event The triggering mouse event.
+   */
   selectCategory(category: string, event: MouseEvent) {
     event.stopPropagation();
     this.selectedCategory = category;
@@ -98,11 +149,20 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Closes the category dropdown.
+   */
   closeCategoryDropdown() {
     this.dropdownOpen = false;
   }
 
 
+  /**
+   * Creates the human-readable deadline label shown on a survey card.
+   *
+   * @param survey The survey whose deadline should be formatted.
+   * @returns A relative deadline label.
+   */
   getDeadlineText(survey: Survey) {
     const days = Math.ceil((this.deadlineTime(survey) - Date.now()) / 86400000);
     if (days < 0) return 'Ended';
@@ -112,11 +172,17 @@ export class HomeViewComponent {
   }
 
 
+  /**
+   * Opens the create-survey dialog from the home page.
+   */
   openCreateSurvey() {
     this.createSurveyModal?.open();
   }
 
 
+  /**
+   * Reloads the survey collection after a new survey has been published.
+   */
   refreshSurveys() {
     this.surveysData.getSurveys();
   }

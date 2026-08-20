@@ -1,11 +1,20 @@
 import { Survey } from '../interfaces/survey-interface';
 
+/**
+ * Creates an ISO date relative to the current day.
+ *
+ * @param offset Number of days to add or subtract.
+ * @returns Date formatted as YYYY-MM-DD.
+ */
 const dateFromToday = (offset: number) => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
   return date.toISOString().slice(0, 10);
 };
 
+/**
+ * Demo surveys used when no Supabase project is configured.
+ */
 export const DEMO_SURVEYS: Survey[] = [
   {
     id: 101,

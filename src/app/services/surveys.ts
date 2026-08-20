@@ -24,6 +24,9 @@ type LocalSurveyStore = {
 };
 
 @Injectable({ providedIn: 'root' })
+/**
+ * Central data service for surveys, questions, votes and realtime synchronization.
+ */
 export class Surveys implements OnDestroy {
   readonly supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   readonly surveys = signal<Survey[]>(DEMO_SURVEYS);
@@ -35,6 +38,9 @@ export class Surveys implements OnDestroy {
   private resultChannel?: BroadcastChannel;
   private surveyChannel?: BroadcastChannel;
 
+  /**
+   * Initializes local synchronization and Supabase realtime subscriptions when configured.
+   */
   constructor() {
     this.setupLocalSync();
     if (!this.isConfigured()) {
@@ -47,6 +53,11 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Loads all available surveys from Supabase or the local fallback store.
+   *
+   * @returns A promise resolving to the current survey collection.
+   */
   async getSurveys() {
     if (!this.isConfigured()) return this.refreshLocalSurveys();
     const { data, error } = await this.supabase.from('surveyDetail').select('*');
@@ -56,6 +67,12 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Creates a survey using Supabase when configured, otherwise local storage.
+   *
+   * @param input Normalized survey data entered by the user.
+   * @returns The newly created survey.
+   */
   async createSurvey(input: NewSurveyInput) {
     if (!this.isConfigured()) return this.createLocalSurvey(input);
     return this.createRemoteSurvey(input);
@@ -63,6 +80,12 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Loads the questions and answer options belonging to a survey.
+   *
+   * @param surveyId Id of the survey to load.
+   * @returns The questions including their related answers.
+   */
   async loadSurveyContent(surveyId: number) {
     await this.setRelatedQuestions(surveyId);
     const answers = await Promise.all(this.questions().map((question) => this.getRelatedAnswers(question.id)));
@@ -72,6 +95,12 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Loads all vote records required to calculate live survey statistics.
+   *
+   * @param surveyId Id of the survey whose results should be loaded.
+   * @returns The current vote records for the survey.
+   */
   async getStatisticsData(surveyId: number) {
     this.activeStatisticsSurveyId = surveyId;
     if (!this.isConfigured()) return this.loadLocalStatistics(surveyId);
@@ -83,6 +112,12 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Persists a completed survey submission and refreshes its statistics.
+   *
+   * @param votes Vote records generated from the selected answers.
+   * @returns A promise that resolves after the votes have been stored.
+   */
   async submitVotes(votes: SurveySubmission[]) {
     if (votes.length === 0) return;
     if (!this.isConfigured()) return this.submitLocalVotes(votes);
@@ -93,6 +128,9 @@ export class Surveys implements OnDestroy {
 
 
 
+  /**
+   * Releases realtime channels, broadcast channels and storage listeners.
+   */
   ngOnDestroy() {
     if (this.realtimeChannel) this.supabase.removeChannel(this.realtimeChannel);
     this.resultChannel?.close();

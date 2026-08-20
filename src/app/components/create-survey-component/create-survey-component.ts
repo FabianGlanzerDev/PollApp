@@ -11,6 +11,12 @@ import {
 import { NewSurveyInput } from '../../interfaces/survey-interface';
 import { Surveys } from '../../services/surveys';
 
+/**
+ * Creates a validator that checks the trimmed text length.
+ *
+ * @param minLength Minimum number of non-whitespace characters.
+ * @returns An Angular validator function.
+ */
 const trimmedMinLength = (minLength: number) => {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = String(control.value ?? '').trim();
@@ -18,6 +24,12 @@ const trimmedMinLength = (minLength: number) => {
   };
 };
 
+/**
+ * Rejects dates that are earlier than the current day.
+ *
+ * @param control Form control containing the selected date.
+ * @returns A validation error for past dates, otherwise null.
+ */
 const notPastDate = (control: AbstractControl): ValidationErrors | null => {
   if (!control.value) return null;
   const today = new Date();
@@ -31,6 +43,9 @@ const notPastDate = (control: AbstractControl): ValidationErrors | null => {
   templateUrl: './create-survey-component.html',
   styleUrl: './create-survey-component.scss',
 })
+/**
+ * Manages the create-survey dialog, validation and dynamic questions and answers.
+ */
 export class CreateSurveyComponent {
   @ViewChild('surveyDialog') dialog?: ElementRef<HTMLDialogElement>;
   @Output() published = new EventEmitter<void>();
@@ -54,67 +69,117 @@ export class CreateSurveyComponent {
   });
 
 
+  /**
+   * Returns the question form array of the survey form.
+   */
   get questions() {
     return this.surveyForm.controls.questions;
   }
 
 
+  /**
+   * Opens the survey dialog and prevents background scrolling.
+   */
   open() {
     this.dialog?.nativeElement.showModal();
     this.document.body.style.overflow = 'hidden';
   }
 
 
+  /**
+   * Closes the create-survey dialog.
+   */
   close() {
     this.dialog?.nativeElement.close();
   }
 
 
+  /**
+   * Resets the form and restores page scrolling after the dialog closes.
+   */
   onDialogClose() {
     this.resetForm();
     this.document.body.style.removeProperty('overflow');
   }
 
 
+  /**
+   * Closes the dialog when the user clicks directly on its backdrop.
+   *
+   * @param event The click event raised by the dialog.
+   */
   closeFromBackdrop(event: MouseEvent) {
     if (event.target === this.dialog?.nativeElement) this.close();
   }
 
 
+  /**
+   * Toggles the category picker and marks the control as touched when closing it.
+   */
   toggleCategory() {
     this.categoryOpen = !this.categoryOpen;
     if (!this.categoryOpen) this.surveyForm.controls.category.markAsTouched();
   }
 
 
+  /**
+   * Selects a category and closes the category picker.
+   *
+   * @param category The category selected by the user.
+   */
   selectCategory(category: string) {
     this.surveyForm.controls.category.setValue(category);
     this.categoryOpen = false;
   }
 
 
+  /**
+   * Returns the answer form array for a question.
+   *
+   * @param questionIndex Index of the question in the form.
+   * @returns The answer controls belonging to the question.
+   */
   getAnswers(questionIndex: number) {
     return this.questions.at(questionIndex).controls.answers as FormArray;
   }
 
 
+  /**
+   * Adds another question while the configured question limit is not reached.
+   */
   addQuestion() {
     if (this.questions.length < 4) this.questions.push(this.createQuestion());
   }
 
 
+  /**
+   * Removes a question or resets the mandatory first question.
+   *
+   * @param questionIndex Index of the question to remove.
+   */
   removeQuestion(questionIndex: number) {
     if (questionIndex === 0) this.questions.at(0).reset();
     else this.questions.removeAt(questionIndex);
   }
 
 
+  /**
+   * Adds an answer option to a question while the answer limit is not reached.
+   *
+   * @param questionIndex Index of the target question.
+   */
   addAnswer(questionIndex: number) {
     const answers = this.getAnswers(questionIndex);
     if (answers.length < 6) answers.push(this.createAnswer());
   }
 
 
+  /**
+   * Removes an answer option while preserving the minimum required answers.
+   *
+   * @param questionIndex Index of the target question.
+   * @param answerIndex Index of the answer to remove.
+   */
   removeAnswer(questionIndex: number, answerIndex: number) {
     const answers = this.getAnswers(questionIndex);
     if (questionIndex === 0 && answerIndex < 2) answers.at(answerIndex).reset();
@@ -122,11 +187,22 @@ export class CreateSurveyComponent {
   }
 
 
+  /**
+   * Converts a zero-based answer index to its alphabetical label.
+   *
+   * @param index Zero-based answer index.
+   * @returns The corresponding uppercase letter.
+   */
   getLetter(index: number) {
     return String.fromCharCode(65 + index);
   }
 
 
+  /**
+   * Validates and publishes the survey while preventing duplicate submissions.
+   *
+   * @returns A promise that resolves when publishing has finished.
+   */
   async submit() {
     this.surveyForm.markAllAsTouched();
     if (this.surveyForm.invalid || this.isSaving) return;
@@ -156,6 +232,11 @@ export class CreateSurveyComponent {
   }
 
 
+  /**
+   * Converts the reactive form values into the survey payload used by the service.
+   *
+   * @returns A normalized survey creation payload.
+   */
   private buildSurveyInput(): NewSurveyInput {
     const raw = this.surveyForm.getRawValue();
     return {
@@ -172,6 +253,11 @@ export class CreateSurveyComponent {
   }
 
 
+  /**
+   * Provides tomorrow as the fallback deadline for surveys without a selected date.
+   *
+   * @returns Tomorrow formatted as YYYY-MM-DD.
+   */
   private defaultDeadline() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -192,6 +278,9 @@ export class CreateSurveyComponent {
   }
 
 
+  /**
+   * Restores the form to its initial question and answer structure.
+   */
   private resetForm() {
     while (this.questions.length > 1) this.questions.removeAt(this.questions.length - 1);
     const answers = this.getAnswers(0);
