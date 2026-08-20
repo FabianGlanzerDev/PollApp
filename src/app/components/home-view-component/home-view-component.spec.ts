@@ -25,4 +25,10 @@ describe('HomeViewComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should label surveys without a deadline', () => {
+    const survey = { id: 1, title: 'Open Survey', description: '', deadline: null, category: 'Work' };
+    expect(component.getDeadlineText(survey)).toBe('No deadline');
+  });
+
 });

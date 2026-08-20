@@ -79,17 +79,35 @@ h2 {
   }
 }
 
-.survey-data-card,
-.question-card {
-  background: #514657;
+.survey-form-card {
+  padding: 28px;
   border-radius: 0 70px 0 0;
+  background: #514657;
 }
 
 .survey-data-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 22px 42px;
-  padding: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.8fr) minmax(0, 1.45fr);
+  grid-template-areas:
+    'name name description'
+    'date category description';
+  gap: 16px 28px;
+}
+
+.survey-name-field {
+  grid-area: name;
+}
+
+.date-field {
+  grid-area: date;
+}
+
+.description-field {
+  grid-area: description;
+}
+
+.category-field {
+  grid-area: category;
 }
 
 .field {
@@ -107,9 +125,6 @@ h2 {
   }
 }
 
-.description-field {
-  grid-column: 1 / -1;
-}
 
 input,
 textarea {
@@ -148,6 +163,15 @@ input.ng-invalid.ng-touched {
   gap: 8px;
 }
 
+
+.description-row {
+  align-items: start;
+}
+
+.description-row .delete-button {
+  margin-top: 2px;
+}
+
 .error {
   min-height: 20px;
   margin: 5px 0 0;
@@ -169,7 +193,7 @@ input.ng-invalid.ng-touched {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 220px;
+  width: 100%;
   min-height: 42px;
   padding: 0 10px;
   border: 0;
@@ -226,7 +250,8 @@ input.ng-invalid.ng-touched {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 220px;
+  width: 100%;
+  min-width: 220px;
   margin: 0;
   padding: 8px;
   list-style: none;
@@ -244,19 +269,23 @@ input.ng-invalid.ng-touched {
     font: 16px $font-body;
     cursor: pointer;
 
-    &:hover {
+    &:hover,
+    &.selected {
       background: $color-soft-purple;
     }
   }
 }
 
 .questions-section {
-  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px 48px;
+  margin-top: 42px;
 }
 
 .question-card {
-  padding: 22px 24px 24px;
-  margin-bottom: 24px;
+  min-width: 0;
 }
 
 .question-heading,
@@ -401,7 +430,8 @@ input.ng-invalid.ng-touched {
 }
 
 .add-question-button {
-  margin: 0 auto 24px;
+  justify-self: start;
+  margin: 0;
   padding: 12px 18px;
   background: rgba(255, 183, 112, 0.3);
   color: $color-white;
@@ -420,7 +450,7 @@ input.ng-invalid.ng-touched {
 .publish-button {
   min-width: 112px;
   height: 48px;
-  margin-left: auto;
+  margin: 28px 0 0 auto;
   padding: 0 18px;
   overflow: hidden;
   background: $color-secondary-orange;
@@ -503,11 +533,15 @@ input.ng-invalid.ng-touched {
   }
 
   .survey-data-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'name name'
+      'date category'
+      'description description';
   }
 
-  .description-field {
-    grid-column: auto;
+  .questions-section {
+    grid-template-columns: 1fr;
   }
 
   h2 {
@@ -554,14 +588,19 @@ input.ng-invalid.ng-touched {
     display: none;
   }
 
-  .survey-data-card,
-  .question-card {
+  .survey-form-card {
+    padding: 16px;
     border-radius: 0 52px 0 0;
   }
 
   .survey-data-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'name'
+      'category'
+      'date'
+      'description';
     gap: 16px;
-    padding: 16px;
   }
 
   .field label {
@@ -586,8 +625,9 @@ input.ng-invalid.ng-touched {
     width: 100%;
   }
 
-  .question-card {
-    padding: 18px 16px 20px;
+  .questions-section {
+    gap: 28px;
+    margin-top: 30px;
   }
 
   .question-heading,
@@ -648,7 +688,7 @@ input.ng-invalid.ng-touched {
   .publish-button {
     min-width: 128px;
     height: 48px;
-    margin: 0 auto;
+    margin: 28px auto 0;
     padding-inline: 18px;
     font-size: 16px;
   }

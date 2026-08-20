@@ -67,7 +67,7 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
    * Indicates whether the survey deadline has passed.
    */
   get expired() {
-    if (!this.survey) return false;
+    if (!this.survey?.deadline) return false;
     return Date.now() > new Date(`${this.survey.deadline}T23:59:59`).getTime();
   }
 
@@ -118,6 +118,19 @@ export class ShowSurveyComponent implements OnInit, OnDestroy {
     this.innerWidth.set(window.innerWidth);
   }
 
+
+
+  /**
+   * Formats a survey deadline for the detail view.
+   *
+   * @param deadline Survey deadline in YYYY-MM-DD format.
+   * @returns A localized date or a no-deadline label.
+   */
+  formatDeadline(deadline: string | null) {
+    if (!deadline) return 'No deadline';
+    const [year, month, day] = deadline.split('-');
+    return `${day}.${month}.${year}`;
+  }
 
 
   /**

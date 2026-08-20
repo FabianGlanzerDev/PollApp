@@ -328,25 +328,6 @@
   }
 }
 
-@media (max-width: 420px) {
-  .survey-section > h2 {
-    font-size: 52px;
-  }
-
-  .tab-buttons {
-    gap: 10px;
-  }
-
-  .tab-buttons button {
-    padding-inline: 10px;
-  }
-
-  .ending-card {
-    min-width: 250px;
-  }
-}
-
-
 @media (max-width: 480px) {
   .main-section {
     padding-bottom: 64px;
@@ -432,5 +413,23 @@
   .survey-list-card h3 {
     margin: 6px 0 14px;
     font-size: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .survey-section > h2 {
+    font-size: 44px;
+  }
+
+  .tab-buttons {
+    gap: 10px;
+  }
+
+  .tab-buttons button {
+    padding-inline: 10px;
+  }
+
+  .ending-card {
+    min-width: 210px;
   }
 }

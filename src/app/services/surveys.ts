@@ -140,7 +140,7 @@ export class Surveys implements OnDestroy {
       this.questions.set(localQuestions);
       return;
     }
-    const { data } = await this.supabase.from('questionDetail').select('*').eq('survey', id);
+    const { data } = await this.supabase.from('questionDetail').select('*').eq('survey', id).order('id', { ascending: true });
     this.questions.set((data ?? []) as Question[]);
   }
 
@@ -151,7 +151,7 @@ export class Surveys implements OnDestroy {
       const localAnswers = this.readLocalSurveyStore().answers.filter((answer) => answer.question === questionId);
       return localAnswers;
     }
-    const { data } = await this.supabase.from('answerDetail').select('*').eq('question', questionId);
+    const { data } = await this.supabase.from('answerDetail').select('*').eq('question', questionId).order('id', { ascending: true });
     return (data ?? []) as Answer[];
   }
 

@@ -11,7 +11,7 @@
       <img src="assets/images/logo-dark.svg" alt="PollApp" />
     </a>
     <button class="createButton" type="button" (click)="openCreateSurvey()">
-      New Survey
+      Create survey
       <span class="createButtonIcon"><img src="assets/icons/plus-black.svg" alt="" /></span>
     </button>
   </div>
@@ -28,7 +28,7 @@
       @if (survey) {
         <div class="mainSurvey">
           <div class="deadlineCategoryWrapper">
-            <p class="deadlineOfSurvey">Deadline: {{ survey.deadline }}</p>
+            <p class="deadlineOfSurvey">{{ survey.deadline ? 'Ends on ' + formatDeadline(survey.deadline) : 'No deadline' }}</p>
             <p class="categoryOfSurvey">Category: {{ survey.category }}</p>
           </div>
 
@@ -112,8 +112,8 @@
     >
       @if (participantCount() > 0) {
         <h2>
-          Survey Statistics
-          <span class="live">Live</span>
+          Survey results
+          <span class="live">LIVE</span>
           <span class="point" aria-hidden="true">.</span>
         </h2>
         <p class="participantCount">
@@ -136,7 +136,7 @@
           </div>
         }
       } @else {
-        <h2>Survey Statistics <span class="live">Live</span></h2>
+        <h2>Survey results <span class="live">LIVE</span></h2>
         <p class="statisticsDescription">Results will be shown here after participants complete the survey.</p>
         <p class="noAnswers">There are no answers yet.</p>
       }

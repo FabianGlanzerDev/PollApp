@@ -5,7 +5,7 @@ export interface Survey {
   id: number;
   title: string;
   description: string;
-  deadline: string;
+  deadline: string | null;
   category: string;
 }
 
@@ -73,7 +73,7 @@ export interface NewSurveyQuestion {
 export interface NewSurveyInput {
   title: string;
   description: string;
-  deadline: string;
+  deadline: string | null;
   category: string;
   questions: NewSurveyQuestion[];
 }

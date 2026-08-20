@@ -164,6 +164,7 @@ export class HomeViewComponent {
    * @returns A relative deadline label.
    */
   getDeadlineText(survey: Survey) {
+    if (!survey.deadline) return 'No deadline';
     const days = Math.ceil((this.deadlineTime(survey) - Date.now()) / 86400000);
     if (days < 0) return 'Ended';
     if (days === 0) return 'Ends today';
@@ -189,6 +190,7 @@ export class HomeViewComponent {
 
 
   private deadlineTime(survey: Survey) {
+    if (!survey.deadline) return Number.POSITIVE_INFINITY;
     const [year, month, day] = survey.deadline.split('-').map(Number);
     return new Date(year, month - 1, day).getTime();
   }

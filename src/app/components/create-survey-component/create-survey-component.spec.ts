@@ -26,4 +26,16 @@ describe('CreateSurveyComponent', () => {
   it('should start with an invalid required form', () => {
     expect(component.surveyForm.invalid).toBe(true);
   });
+
+  it('should allow publishing without an optional end date', () => {
+    component.surveyForm.controls.surveyName.setValue('Team Survey');
+    component.surveyForm.controls.category.setValue('Work');
+    const question = component.questions.at(0);
+    question.controls.questionText.setValue('Which option should we choose?');
+    component.getAnswers(0).at(0).get('answerText')?.setValue('Option A');
+    component.getAnswers(0).at(1).get('answerText')?.setValue('Option B');
+    expect(component.surveyForm.valid).toBe(true);
+    expect(component.surveyForm.controls.endDate.value).toBe('');
+  });
+
 });

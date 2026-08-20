@@ -46,6 +46,8 @@
           class="category-toggle"
           [class.open]="dropdownOpen"
           (click)="toggleCategoryDropdown($event)"
+          aria-controls="home-category-list"
+          [attr.aria-expanded]="dropdownOpen"
         >
           <span>Sort by categories</span>
           <span class="arrow-wrapper" aria-hidden="true">
@@ -58,7 +60,7 @@
           <span class="selected-category">{{ selectedCategory }}</span>
         }
 
-        <ul class="category-list" [class.open]="dropdownOpen">
+        <ul id="home-category-list" class="category-list" [class.open]="dropdownOpen">
           @for (category of categories; track category) {
             <li>
               <button

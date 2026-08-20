@@ -250,7 +250,7 @@ export class CreateSurveyComponent {
     const raw = this.surveyForm.getRawValue();
     return {
       title: (raw.surveyName ?? '').trim(),
-      deadline: raw.endDate || this.defaultDeadline(),
+      deadline: raw.endDate || null,
       category: raw.category ?? '',
       description: raw.description?.trim() ?? '',
       questions: raw.questions.map((question) => ({
@@ -259,18 +259,6 @@ export class CreateSurveyComponent {
         answers: question.answers.map((answer) => (answer.answerText ?? '').trim()),
       })),
     };
-  }
-
-
-  /**
-   * Provides tomorrow as the fallback deadline for surveys without a selected date.
-   *
-   * @returns Tomorrow formatted as YYYY-MM-DD.
-   */
-  private defaultDeadline() {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().slice(0, 10);
   }
 
 
