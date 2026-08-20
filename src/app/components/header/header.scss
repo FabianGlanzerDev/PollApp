@@ -21,3 +21,16 @@
     padding-top: 28px;
   }
 }
+
+
+@media (max-width: 420px) {
+  .app-header {
+    width: min(calc(100% - 32px), $content-width);
+    padding-top: 22px;
+  }
+
+  .app-header img {
+    width: 108px;
+    height: auto;
+  }
+}

@@ -132,7 +132,11 @@ h1 {
     grid-template-columns: 1fr;
     grid-template-areas: 'heading' 'image' 'content';
     width: min(calc(100% - 40px), $content-width);
-    margin-top: 44px;
+    margin: 36px auto 72px;
+  }
+
+  h1 {
+    margin-bottom: 18px;
   }
 
   h1 span {
@@ -141,8 +145,15 @@ h1 {
   }
 
   .smartphone {
+    width: 230px;
+    height: 227px;
     justify-self: center;
-    margin: 24px 0;
+    margin: 0 auto 20px;
+  }
+
+  .smartphone img {
+    width: 230px;
+    height: 227px;
   }
 
   .hero-content p {
@@ -150,12 +161,65 @@ h1 {
   }
 
   .new-survey-button {
-    margin: 32px auto 0;
+    margin: 30px auto 0;
   }
 
   .new-survey-button .plus-icon {
     width: 24px;
     margin-left: 12px;
     opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    width: min(calc(100% - 32px), $content-width);
+    margin: 28px auto 58px;
+  }
+
+  h1 {
+    margin-bottom: 12px;
+  }
+
+  h1 span {
+    font-size: clamp(44px, 13vw, 56px);
+    line-height: 0.94;
+  }
+
+  .smartphone {
+    width: 200px;
+    height: 197px;
+    margin-bottom: 16px;
+  }
+
+  .smartphone img {
+    width: 200px;
+    height: 197px;
+  }
+
+  .hero-content p {
+    max-width: 100%;
+    margin-bottom: 0;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .new-survey-button {
+    min-width: 138px;
+    height: 44px;
+    margin-top: 28px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+
+  .new-survey-button img {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+  }
+
+  .new-survey-button .plus-icon {
+    width: 20px;
+    margin-left: 10px;
   }
 }

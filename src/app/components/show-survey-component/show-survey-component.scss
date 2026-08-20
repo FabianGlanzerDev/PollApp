@@ -556,3 +556,197 @@
     width: min(calc(100% - 32px), 357px);
   }
 }
+
+
+@media (max-width: 480px) {
+  .mainWrapper {
+    width: min(calc(100% - 16px), 375px);
+    padding: 20px 0 28px;
+  }
+
+  .detailLogoLink img {
+    width: 96px;
+    height: auto;
+  }
+
+  .surveyStatisticWrapper {
+    margin-top: 18px;
+  }
+
+  .surveyWrapperLeftSide {
+    min-height: auto;
+    padding: 18px 16px 40px;
+    border-top-right-radius: 108px;
+  }
+
+  .statusOfSurvey {
+    padding: 4px 10px;
+    font-size: 15px;
+  }
+
+  .closeSurvey {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .deadlineCategoryWrapper {
+    margin-top: 18px;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .mainSurveyHeadline {
+    margin-top: 14px;
+    font-size: clamp(36px, 13vw, 54px);
+    line-height: 0.95;
+  }
+
+  .mainSurveyDescription {
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .questionAnswerWrapper {
+    gap: 24px;
+    margin-top: 28px;
+  }
+
+  .question h2 {
+    font-size: 17px;
+  }
+
+  .multipleAnswers {
+    font-size: 13px;
+  }
+
+  .answer {
+    width: 100%;
+    margin-top: 8px;
+    padding: 3px 0;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .answer input[type='checkbox'] {
+    margin-right: 6px;
+  }
+
+  .completeSurveyButton {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 12px;
+    background: $color-primary-orange;
+    font-size: 16px;
+  }
+
+  .completeSurveyButton:not(:disabled)::after {
+    width: 18px;
+    height: 18px;
+    content: '';
+    background: url('../../../assets/icons/publish-check.svg') center / contain no-repeat;
+  }
+
+  .errorMessageSubmitt {
+    font-size: 14px;
+  }
+
+  .statisticsButton {
+    width: fit-content;
+    height: auto;
+    gap: 6px;
+    margin: 22px 0 0 0;
+    padding: 0;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .statisticsButton img {
+    width: 14px;
+  }
+
+  .statisticsWrapperRightSide {
+    padding: 24px 0 0;
+  }
+
+  .statisticsWrapperRightSide > h2 {
+    gap: 6px;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .live {
+    font-size: 26px;
+  }
+
+  .statisticsDescription,
+  .participantCount,
+  .noAnswers {
+    max-width: 100%;
+    margin-left: 0;
+    font-size: 16px;
+  }
+
+  .participantCount {
+    margin: 20px 0 22px;
+  }
+
+  .participantCount b {
+    font-size: 17px;
+  }
+
+  .statisticsQuestion {
+    margin-top: 22px;
+  }
+
+  .statisticsQuestion h3 {
+    max-width: 100%;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .diagram {
+    grid-template-columns: 18px minmax(0, 1fr) 40px;
+    gap: 8px;
+  }
+
+  .progressTrack {
+    height: 12px;
+  }
+
+  .diagram b {
+    font-size: 15px;
+  }
+
+  .successMessageSubmitt {
+    top: auto;
+    right: 12px;
+    bottom: 20px;
+    width: min(calc(100% - 24px), 357px);
+    min-height: 78px;
+    padding: 14px 18px;
+    transition: transform 300ms ease, opacity 300ms ease;
+    transform: translateY(120px);
+    opacity: 0;
+    border-radius: 12px 42px 4px 4px;
+  }
+
+  .successMessageSubmitt.active {
+    right: 12px;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .successMessageSubmitt .text {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+}
