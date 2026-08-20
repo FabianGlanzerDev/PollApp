@@ -33,6 +33,11 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets/"
               }
@@ -41,45 +46,46 @@
               "src/styles.scss"
             ]
           },
-        "configurations": {
-          "production": {
-            "budgets": [
-              {
-                "type": "initial",
-                "maximumWarning": "600kB",
-                "maximumError": "1MB"
-              },
-              {
-                "type": "anyComponentStyle",
-                "maximumWarning": "29kB",
-                "maximumError": "29kB"
-              }
-            ],
-            "outputHashing": "all"
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "600kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "29kB",
+                  "maximumError": "29kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
           },
-          "development": {
-            "optimization": false,
-            "extractLicenses": false,
-            "sourceMap": true
-          }
+          "defaultConfiguration": "production"
         },
-        "defaultConfiguration": "production"
-      },
-      "serve": {
-        "builder": "@angular/build:dev-server",
-        "configurations": {
-          "production": {
-            "buildTarget": "poll_app:build:production"
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "poll_app:build:production"
+            },
+            "development": {
+              "buildTarget": "poll_app:build:development"
+            }
           },
-          "development": {
-            "buildTarget": "poll_app:build:development"
-          }
+          "defaultConfiguration": "development"
         },
-        "defaultConfiguration": "development"
-      },
-      "test": {
-        "builder": "@angular/build:unit-test"
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
       }
     }
   }
-}}
+}

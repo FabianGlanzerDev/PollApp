@@ -47,7 +47,7 @@ npm start
 The application opens automatically in the browser. By default Angular uses:
 
 ```text
-http://localhost:4200/
+http://localhost:4200/angular-projekts/poll_app/
 ```
 
 ## Supabase Setup
@@ -89,7 +89,8 @@ src/
 ├── environments/
 └── styles/
 supabase/
-└── setup.sql
+├── setup.sql
+└── seed-real-surveys.sql
 ```
 
 ## Build
@@ -109,3 +110,17 @@ Run the Angular tests with:
 ```bash
 npm test
 ```
+
+## Architecture
+
+See `ARCHITECTURE.md` for the current component and data-flow overview.
+
+## Deployment
+
+The production base path is configured in `angular.json` as:
+
+```text
+/angular-projekts/poll_app/
+```
+
+`public/.htaccess` provides the Apache fallback to `index.html` so routed survey URLs can also be reloaded directly after deployment.
