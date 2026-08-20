@@ -1,119 +1,141 @@
-<div (click)="toggleOnlyClose()" class="newSurveyWrapper">
-    <div class="successMessage">
-        <div class="text">
-            Your Survey is now<br> published
-    
+<dialog
+  #surveyDialog
+  class="survey-dialog"
+  (close)="onDialogClose()"
+  (click)="closeFromBackdrop($event)"
+>
+  <form class="survey-dialog-content" [formGroup]="surveyForm" (ngSubmit)="submit()">
+    <header class="dialog-header">
+      <span class="draft-badge">Draft</span>
+      <h2>Create Survey</h2>
+      <button class="cancel-button" type="button" (click)="close()">
+        <span>Cancel</span>
+        <img src="assets/icons/close.svg" alt="" />
+      </button>
+    </header>
+
+    <section class="survey-data-card">
+      <div class="field survey-name-field">
+        <label for="survey-name">Survey name *</label>
+        <div class="input-delete-row">
+          <input id="survey-name" type="text" formControlName="surveyName" placeholder="Team Event 2026" />
+          <button class="delete-button" type="button" (click)="surveyForm.controls.surveyName.reset()" aria-label="Clear survey name">
+            <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+            <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+          </button>
         </div>
-        <div (click)="hideSuccessMessage()" class="closeButton"><img src="assets/icons/close-black.svg"></div>
-    </div>
-    <div class="statusCloseArea">
-        <p class="firstPTag">Draft</p>
-        <button routerLink="/" class="cancelButtonMobile"><img src="assets/icons/close.svg"></button>
-    </div>
-    <div class="headlineButtonAria">
-        <p class="headline">Create new survey</p>
-        <button routerLink="/" class="cancelButton">Cancel<img src="assets/icons/close.svg"></button>
-    </div>
-    <div  class="newSurveyForm">
-        <div class="mainDataOfSurvey">
-            <div class="nameDateAria">
-                <div class="surveyNameAria">
-                    <p class="SurveyName">Survey name</p>
-                    <div class="surveyNameInputAndImg">
-                        <div class="surveyNameInput">
-                            <input type="text" id="surveyName" [formControl]="surveyName">
-                        </div>
-                        <img src="assets/icons/delete.svg" (click)="surveyName.setValue('')">
-                    </div>
-                    @if(surveyName.invalid && surveyName.touched){
-                    <p class="surveyNameError">Survey name is required</p>
-                    }@else {
-                    <p class="surveyNameError"></p>
-                    }
-                </div>
-                <div class="setEndDateArea">
-                    <div class="inputFieldSite">
-                        <p class="setEndDate">Set end date (optional)</p>
-                        <div class="setEndDateInputAndImg">
-                            <div class="setEndDateInput">
-                                <input type="date" min="{{ today | date: 'yyyy-MM-dd'}}" id="date" [formControl]="endDate">
-                            </div>
-                            <img src="assets/icons/delete.svg" (click)="endDate.setValue('tt/mm/jjjj')">
-                        </div>
-                    </div>
-                    <div (click)="stopThePropagation($event)" class="dropdownMenuSite">
-                        <button (click)="toggleDropDown()" class="dropdownButton">Select category<img
-                                src="assets/icons/arrow-drop-down.svg"></button>
-                        <div [class.open]="isDropdownOpen" class="dropDownList">
-                            @for (category of categoryArray; track category; let i = $index){
-                            <div class="dropDownItem" (click)="categorySelected(category)">{{ category }}</div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="descriptionAria">
-                <p class="description">Description Text (optional)</p>
-                <div class="textareaAndImg">
-                    <div class="descriptionInput">
-                        <textarea type="text" id="description" [formControl]="description"></textarea>
-                        @if(description.invalid && description.touched){
-                        <p class="descriptionError">Description is required</p>
-                        }
-                    </div>
-                    <img src="assets/icons/delete.svg" (click)="description.setValue('')">
-                </div>
-            </div>
-            @if (questions.length > 0) {
-            @for (questionGroup of questions.controls; track $index; let qIndex = $index){
-            <div class="questionArea">
-                <div class="headlineAndImg">
-                    <p class="question">{{ $index + 1 }}. Question</p>
-                    <img src="assets/icons/delete.svg" (click)="questions.removeAt($index)">
-                </div>
-                <div class="questionInput">
-                    <input type="text" id="question" [formControl]="asFormControl(questionGroup.get('question'))">
-                </div>
-                @if(questionGroup.get('question')?.invalid && questionGroup.get('question')?.touched){
-                <p class="questionError">Question is required</p>
-                }@else {
-                <p class="questionError"></p>
-                }
-                <div class="answerHeadlineAndSetting">
-                    <p>Answers</p>
-                    <div class="checkboxAndPtag">
-                        <input class="allowMultiple" [formControl]="asFormControl(questionGroup.get('allowMultipleAnswers'))" type="checkbox"
-                            name="setting" id="checkbox">
-                        <p class="settingDetail">allow multiple answers</p>
-                    </div>
-                </div>
+        <p class="error" [class.hidden]="!(surveyForm.controls.surveyName.invalid && surveyForm.controls.surveyName.touched)">
+          Please enter at least 5 characters.
+        </p>
+      </div>
 
-                @for(answer of getAnswers(qIndex).controls; track answer; let aIndex = $index){
-                <div class="answerBox">
-                    <div class="count">{{ letter[aIndex] }}.</div>
-                    <div class="answerInput">
-                        <input type="text" id="answer" [formControl]="answer">
-                    </div>
-                    <img src="assets/icons/delete.svg" (click)="deleteAnswer(qIndex, aIndex)">
-                </div>
-                @if(answer.invalid && answer.touched){
-                <p class="answerError">Answer is required</p>
-                }@else{
-                <p class="answerError"></p>
-                }
-                }
+      <div class="field date-field">
+        <label for="end-date">End date <span>(optional)</span></label>
+        <input id="end-date" type="date" formControlName="endDate" [min]="minEndDate" />
+        <p class="error" [class.hidden]="!surveyForm.controls.endDate.hasError('pastDate')">
+          Please choose today or a future date.
+        </p>
+      </div>
 
+      <div class="field description-field">
+        <label for="description">Description <span>(optional)</span></label>
+        <textarea id="description" formControlName="description" rows="3" placeholder="What is this survey about?"></textarea>
+      </div>
 
+      <div class="category-field">
+        <button
+          class="category-button"
+          type="button"
+          [class.open]="categoryOpen"
+          [class.invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched"
+          (click)="toggleCategory()"
+        >
+          <span>{{ surveyForm.controls.category.value || 'Select category *' }}</span>
+          <span class="arrow-icon" aria-hidden="true">
+            <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
+            <img class="arrow-hover" src="assets/icons/arrow-drop-down-hover.svg" alt="" />
+          </span>
+        </button>
 
-                <button (click)="addAnswer($index)" class="addLink" type="button">Add answer <img class="addLinkImg"
-                        src="assets/icons/add-circle.svg"></button>
-                
-            </div>
-            }}
-            <button (click)="addQuestion()" type="button" class="addQuestionButton">Add question <img
-                    src="assets/icons/add-circle.svg"></button>
-        </div>
-    </div>
-    <button class="publishButton" type="submit" (click)="submit()">Publish<img
-            src="assets/icons/publish-check.svg"></button>
-</div>
+        @if (categoryOpen) {
+          <ul class="category-list">
+            @for (category of categories; track category) {
+              <li><button type="button" (click)="selectCategory(category)">{{ category }}</button></li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+
+    <section class="questions-section" formArrayName="questions">
+      @for (question of questions.controls; track question; let questionIndex = $index) {
+        <article class="question-card" [formGroupName]="questionIndex">
+          <div class="question-heading">
+            <h3>Question {{ questionIndex + 1 }}</h3>
+            <button class="delete-button" type="button" (click)="removeQuestion(questionIndex)" [attr.aria-label]="'Delete question ' + (questionIndex + 1)">
+              <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+              <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+            </button>
+          </div>
+
+          <input class="question-input" type="text" formControlName="questionText" placeholder="Which date would work best for you?" />
+          <p class="error" [class.hidden]="!(question.controls.questionText.invalid && question.controls.questionText.touched)">
+            Please enter at least 5 characters.
+          </p>
+
+          <div class="answers-heading">
+            <h4>Answers</h4>
+            <label class="multiple-checkbox">
+              <input type="checkbox" formControlName="allowMultiple" />
+              <span class="checkbox-ui" aria-hidden="true"></span>
+              <span>Allow multiple answers.</span>
+            </label>
+          </div>
+
+          <div class="answers-list" formArrayName="answers">
+            @for (answer of getAnswers(questionIndex).controls; track answer; let answerIndex = $index) {
+              <div class="answer-row" [formGroupName]="answerIndex">
+                <span class="answer-letter">{{ getLetter(answerIndex) }}.</span>
+                <input type="text" formControlName="answerText" />
+                <button class="delete-button" type="button" (click)="removeAnswer(questionIndex, answerIndex)" [attr.aria-label]="'Delete answer ' + getLetter(answerIndex)">
+                  <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+                  <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (getAnswers(questionIndex).length < 6) {
+            <button class="add-answer-button" type="button" (click)="addAnswer(questionIndex)">
+              <span>Add answer</span>
+              <img src="assets/icons/add-circle.svg" alt="" />
+            </button>
+          }
+        </article>
+      }
+
+      @if (questions.length < 4) {
+        <button class="add-question-button" type="button" (click)="addQuestion()">
+          <span>Add next question</span>
+          <img src="assets/icons/add-circle.svg" alt="" />
+        </button>
+      }
+    </section>
+
+    <button class="publish-button" type="submit" [class.disabled]="surveyForm.invalid || isSaving">
+      <span>{{ isSaving ? 'Publishing...' : 'Publish' }}</span>
+      <span class="publish-icon" aria-hidden="true">
+        <img src="assets/icons/publish-check.svg" alt="" />
+      </span>
+    </button>
+  </form>
+</dialog>
+
+@if (toastVisible) {
+  <div class="publish-toast" role="status">
+    <span>Your survey is now published</span>
+    <button type="button" (click)="toastVisible = false" aria-label="Close notification">
+      <img src="assets/icons/close-black.svg" alt="" />
+    </button>
+  </div>
+}

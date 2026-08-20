@@ -1,110 +1,147 @@
 <section class="mainWrapper">
-    <div class="successMessageSubmitt">
-        <div class="text">
-            Successfully submitted
+  <div class="successMessageSubmitt" [class.active]="successVisible()">
+    <div class="text">Successfully submitted</div>
+    <button type="button" (click)="hideSuccessMessage()" class="closeButton" aria-label="Close message">
+      <img src="assets/icons/close-black.svg" alt="" />
+    </button>
+  </div>
 
-        </div>
-        <div (click)="hideSuccessMessageSubmitt()" class="closeButton"><img src="assets/icons/close-black.svg"></div>
-    </div>
-    <div class="headLogoButtonArea">
-        <img [routerLink]="['/']" src="assets/images/logo-dark.svg">
-        <button class="createButton" [routerLink]="['/newSurvey']">New Survey<img
-                src="assets/icons/plus-black.svg"></button>
-    </div>
-    <div class="surveyStatisticWrapper">
-        <div class="surveyWrapperLeftSide">
-            <div class="statusCloseArea">
-                <p class="statusOfSurvey">Published</p>
-                <button routerLink="/" class="closeSurvey"><img src="assets/icons/close-button-black.svg"></button>
-            </div>
-            <div class="mainSurvey">
-                @if(survey) {
-                <div class="deadlineCategoryWrapper">
-                    <p class="deadlineOfSurvey">Deadline: {{ survey.deadline }}</p>
-                    <p class="allreadyFilledClass" [style]="allreadyFilled.some(a => a.id === survey?.id) ||
-                        expired || nothingFilledOutyet
-                     ? 'opacity: 1' : 'opacity: 0' ">
-                    @if(allreadyFilled.some(a => a.id === survey?.id)) {
-                    <p class="allreadyFilled">-- allready filled out --</p>
-                    }@else if(expired) {
-                    <p class="allreadyFilled">Survey has allready ended</p>
-                    }
-                    @if(nothingFilledOutyet === true) {
-                    <p class="allreadyFilled">-- nothing filled out yet --</p>
-                    }
-                    </p>
-                    <p class="categoryOfSurvey">Category: {{ survey.category }}</p>
-                </div>
-                <div class="mainSurveyHeadline">{{ survey.title }}</div>
-                <div class="mainSurveyDescription">{{ survey.description }}</div>
-                <div class="questionAnswerWrapper">
-                    @for (question of questions; track question.id) {
-                    <div class="questionWrapper">
-                        <div class="question">
-                            <p>{{ $index + 1 }} {{ question.question }} </p>
-                            @if(question.allowMultipleAnswers) {
-                            <p class="multipleAnswers">Multiple answers allowed</p>
-                            }@else {
-                            <p class="multipleAnswers"></p>
-                            }
-                        </div>
-                        @for (answer of question.answers; track $index) {
-                        <div class="answer">
-                            <input
-                                (click)="preventMultipleAnswers($event, question); collectAnswerIds($event, question, answer.id);"
-                                type="checkbox"
-                                [disabled]="allreadyFilled.some(a => a.id === survey?.id) || 
-                                expired">
-                            <p class="count"  >{{ letter[$index] }}.</p>
-                            <p> {{ answer.answer }}</p>
+  <div class="headLogoButtonArea">
+    <a routerLink="/" class="detailLogoLink" aria-label="Back to PollApp home">
+      <img src="assets/images/logo-dark.svg" alt="PollApp" />
+    </a>
+    <button class="createButton" type="button" (click)="openCreateSurvey()">
+      New Survey
+      <span class="createButtonIcon"><img src="assets/icons/plus-black.svg" alt="" /></span>
+    </button>
+  </div>
 
-                        </div>
-                        }
-                    </div>
-                    }
+  <div class="surveyStatisticWrapper">
+    <div class="surveyWrapperLeftSide">
+      <div class="statusCloseArea">
+        <p class="statusOfSurvey">Published</p>
+        <button routerLink="/" class="closeSurvey" type="button" aria-label="Close survey">
+          <img src="assets/icons/close-button-black.svg" alt="" />
+        </button>
+      </div>
+
+      @if (survey) {
+        <div class="mainSurvey">
+          <div class="deadlineCategoryWrapper">
+            <p class="deadlineOfSurvey">Deadline: {{ survey.deadline }}</p>
+            <p class="categoryOfSurvey">Category: {{ survey.category }}</p>
+          </div>
+
+          @if (alreadyCompleted()) {
+            <p class="surveyStateNotice">You already completed this survey.</p>
+          } @else if (expired) {
+            <p class="surveyStateNotice">This survey has ended. Results are still available.</p>
+          }
+
+          <h1 class="mainSurveyHeadline">{{ survey.title }}</h1>
+          <p class="mainSurveyDescription">{{ survey.description }}</p>
+
+          <div class="questionAnswerWrapper">
+            @for (question of questions; track question.id) {
+              <section class="questionWrapper">
+                <div class="question">
+                  <h2>{{ $index + 1 }}. {{ question.question }}</h2>
+                  @if (question.allowMultipleAnswers) {
+                    <p class="multipleAnswers">Multiple answers allowed</p>
+                  }
                 </div>
+
+                @for (answer of question.answers; track answer.id) {
+                  <label class="answer">
+                    <input
+                      type="checkbox"
+                      [checked]="isSelected(question.id, answer.id)"
+                      [disabled]="!canVote"
+                      (change)="updateAnswer(question, answer.id, $any($event.target).checked)"
+                    />
+                    <span class="count">{{ letters[$index] }}.</span>
+                    <span>{{ answer.answer }}</span>
+                  </label>
                 }
-            </div>
-            <button [disabled]="allreadyFilled.some(a => a.id === survey?.id) || expired" class="completeSurveyButton" (click)="submittDelay()">Complete survey</button>
-            <div class="errorMessageSubmitt">Please fill out all questions</div>
+              </section>
+            }
+          </div>
         </div>
-        @if(innerWidth < 1080) {
-            <button (click)="toggleStatistics()" class="statisticsButton"><label>Close results</label><img src="assets/icons/results-arrow-mobile.svg"><img src="assets/icons/arrow-up-yellow.svg"></button>
+      }
+
+      <button
+        [disabled]="!canVote || submitting()"
+        class="completeSurveyButton"
+        type="button"
+        (click)="completeSurvey()"
+      >
+        @if (submitting()) {
+          Submitting...
+        } @else if (alreadyCompleted()) {
+          Survey completed
+        } @else if (expired) {
+          Survey ended
+        } @else {
+          Complete survey
         }
-        <div class="statisticsWrapperRightSide">
-            @if(surveysData.statistics().length > 0 || this.choosenAnswerArray.length > 0) {
-            <h2>Survey Statistics <p class="live">&nbsp; Live </p>&nbsp;<p class="point">.</p>
-            </h2>
-            <p>allready <b>{{ this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 :
-                    computedStatistics().xTimesSurveyFilled }}</b> participants filled this survey</p>
-            @for(question of questions; track question.id) {
-            <p>{{ $index + 1 }} {{ question.question }} </p>
-            @for (answer of question.answers; track $index) {
+      </button>
 
-            <p class="diagram">{{ letter[$index] }}.<svg width="255" height="14" viewBox="0 0 255 14"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <!-- Hintergrund -->
-                    <rect x="0" y="0" width="255" height="14" rx="10" fill="#e5e7eb" />
-
-                    <!-- Fortschritt: hier z. B. 60% -->
-                    <rect x="0" y="0" style="transition: width 0.4s ease-in-out;" [attr.width]="(computedStatistics().idsOfAnswer.includes(answer.id) || this.choosenAnswerArray.some(a => a.answer_id === answer.id))
-      ? (((computedStatistics().idsOfAnswer.filter((id) => id === answer.id).length + this.choosenAnswerArray.filter((item) => item.answer_id === answer.id).length)
-       / (this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 : computedStatistics().xTimesSurveyFilled)) * 255)
-      : 0" height="14" rx="10" fill="#ffb770" />
-                </svg> <b>{{ computedStatistics().idsOfAnswer.includes(answer.id) || this.choosenAnswerArray.some(a =>
-                    a.answer_id === answer.id) ?
-                    (((computedStatistics().idsOfAnswer.filter((id) => id === answer.id).length +
-                    this.choosenAnswerArray.filter((item) => item.answer_id === answer.id).length) /
-                    (this.choosenAnswerArray.length > 0 ? computedStatistics().xTimesSurveyFilled + 1 :
-                    computedStatistics().xTimesSurveyFilled)) * 100).toFixed(0)
-                    : 0 }}%</b></p>
-            }
-            }
-            } @else{
-            <h2>Survey Statistics <p class="live">&nbsp; Live</p>
-            </h2>
-            <p class="statisticsDescription">Results will be shown here after<br> participants complete the survey.</p>
-            <p class="noAnswers">there are no answers yet</p>}
-        </div>
+      @if (validationMessage()) {
+        <div class="errorMessageSubmitt active">{{ validationMessage() }}</div>
+      } @else {
+        <div class="errorMessageSubmitt" aria-hidden="true"></div>
+      }
     </div>
+
+    @if (innerWidth() < 1080) {
+      <button
+        (click)="toggleResults()"
+        class="statisticsButton"
+        [class.statisticsButtonRotate]="resultsVisible()"
+        type="button"
+      >
+        <span>{{ resultsVisible() ? 'Close results' : 'See results' }}</span>
+        <img src="assets/icons/results-arrow-mobile.svg" alt="" />
+      </button>
+    }
+
+    <aside
+      class="statisticsWrapperRightSide"
+      [class.resultsHidden]="innerWidth() < 1080 && !resultsVisible()"
+      aria-live="polite"
+    >
+      @if (participantCount() > 0) {
+        <h2>
+          Survey Statistics
+          <span class="live">Live</span>
+          <span class="point" aria-hidden="true">.</span>
+        </h2>
+        <p class="participantCount">
+          Already <b>{{ participantCount() }}</b>
+          {{ participantCount() === 1 ? 'participant has' : 'participants have' }} filled this survey
+        </p>
+
+        @for (question of questions; track question.id) {
+          <div class="statisticsQuestion">
+            <h3>{{ $index + 1 }}. {{ question.question }}</h3>
+            @for (answer of question.answers; track answer.id) {
+              <div class="diagram">
+                <span>{{ letters[$index] }}.</span>
+                <div class="progressTrack" aria-hidden="true">
+                  <div class="progressFill" [style.width.%]="answerPercentage(answer.id)"></div>
+                </div>
+                <b>{{ answerPercentage(answer.id) }}%</b>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <h2>Survey Statistics <span class="live">Live</span></h2>
+        <p class="statisticsDescription">Results will be shown here after participants complete the survey.</p>
+        <p class="noAnswers">There are no answers yet.</p>
+      }
+    </aside>
+  </div>
+
+  <app-create-survey-component #createSurveyModal />
 </section>

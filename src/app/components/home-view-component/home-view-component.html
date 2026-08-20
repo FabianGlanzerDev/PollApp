@@ -1,61 +1,93 @@
-<section (click)="toggleOnlyClose()" class="main-section">
-    <app-hero />
-    <div class="survey-section">
-        <div class="headline">Your Surveys</div>
-        <div class="middle">Ending soon surveys</div>
-        <div class="surveys">
-            @if(surveysData){
-                @for (item of filterSurveys(); track item) {
-                    <div [routerLink]="[`activeSurvey/${item.id}`]" class="survey-card">
-                        <p class="surveyCategory">{{ item.category }}</p>
-                        <p class="surveyDescription">{{ item.title }}</p>
-                        <p class="filteredSurveysDeadline">Ends in {{ (((getDeadlineDate(item.deadline) - todayInMilliseconds)/86400000) + 0.5).toFixed(0) }}day(s)</p>
-                        
-                    </div>
-                }
-            }
-            
-        </div>
-        <div class="allSurveysArea">
-            <div class="filterArea">
-                <div class="activePastButtonArea">
-                    <button class="activeSurvey" (click)="filterActiveSurveys()">Active survey</button>
-                    <button class="pastSurvey" (click)="filterPastSurveys()">Past survey</button>
-                </div>
-                <div (click)="stopThePropagation($event)"class="sortArea">
-                    <button (click)="toggleFilterOption(); " class="sortedBy">Sort by categories
-                        <img src="assets/icons/arrow-drop-down.svg">
-                    </button>
-                    <div [class.open]="dropdownOpen" class="categorys">
-                        <div class="dropDownList">
-                        @for (category of categoryArray; track category; let i = $index){
-                                <div (click)="filterThisCategory(category)" class="dropDownItem">{{ category }}</div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="listingSurveys">
-                @if(filteredSurveys.length === 0 && noSurveyFound === true){
-                    <div class="survey-card">
-                        <p class="surveyCategoryMain">category we know everything</p>
-                        <p class="allTitle">No Survey found with this category</p>
-                        <p class="allDeadline">No dealine at all :)</p>
-                    </div>`;
-                }
-                @if(surveysData && noSurveyFound === false){
-                @for (item of filteredSurveys.length ? filteredSurveys : filterSurveyForBottomView(); track item) {
-                    <div  [routerLink]="[`activeSurvey/${item.id}`]" class="survey-card">
-                        <p class="surveyCategoryMain">{{ item.category }}</p>
-                        <p class="allTitle">{{ item.title }}</p>
-                        <p class="allDeadline">{{ +(((getDeadlineDate(item.deadline) - todayInMilliseconds)/86400000) +0.5).toFixed(0) > 0
-                         ? 'Ends in '+ abs(+(((getDeadlineDate(item.deadline) - todayInMilliseconds)/86400000) +0.5).toFixed(0)) + ' day(s)' : 
-                         +(((getDeadlineDate(item.deadline) - todayInMilliseconds)/86400000) +0.5).toFixed(0) === 0 
-                         ? 'Today' : 'Ended'  }}</p>
-                    </div>
-                }
-            }
-            </div>
-        </div>
+<section class="main-section" (click)="closeCategoryDropdown()">
+  <app-hero (createSurvey)="openCreateSurvey()" />
+
+  <section class="survey-section" aria-labelledby="your-surveys-heading">
+    <h2 id="your-surveys-heading">Your Surveys</h2>
+
+    <div class="ending-heading">Ending soon surveys</div>
+
+    <div class="ending-surveys">
+      @for (survey of endingSoonSurveys; track survey.id) {
+        <a class="ending-card" [routerLink]="['/activeSurvey', survey.id]">
+          <span class="card-category">{{ survey.category }}</span>
+          <h3>{{ survey.title }}</h3>
+          <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
+        </a>
+      } @empty {
+        <div class="empty-ending-state">No surveys are ending soon.</div>
+      }
     </div>
+
+    <div class="survey-controls">
+      <div class="tab-buttons" role="tablist" aria-label="Survey status">
+        <button
+          type="button"
+          role="tab"
+          [class.active]="activeTab === 'active'"
+          [attr.aria-selected]="activeTab === 'active'"
+          (click)="$event.stopPropagation(); setTab('active')"
+        >
+          Active survey
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [class.active]="activeTab === 'past'"
+          [attr.aria-selected]="activeTab === 'past'"
+          (click)="$event.stopPropagation(); setTab('past')"
+        >
+          Past survey
+        </button>
+      </div>
+
+      <div class="category-filter">
+        <button
+          type="button"
+          class="category-toggle"
+          [class.open]="dropdownOpen"
+          (click)="toggleCategoryDropdown($event)"
+        >
+          <span>Sort by categories</span>
+          <span class="arrow-wrapper" aria-hidden="true">
+            <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
+            <img class="arrow-hover" src="assets/icons/arrow-drop-down-hover.svg" alt="" />
+          </span>
+        </button>
+
+        @if (selectedCategory !== 'All Surveys') {
+          <span class="selected-category">{{ selectedCategory }}</span>
+        }
+
+        <ul class="category-list" [class.open]="dropdownOpen">
+          @for (category of categories; track category) {
+            <li>
+              <button
+                type="button"
+                [class.selected]="selectedCategory === category"
+                (click)="selectCategory(category, $event)"
+              >
+                {{ category }}
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="survey-grid">
+      @for (survey of displayedSurveys; track survey.id) {
+        <a class="survey-list-card" [routerLink]="['/activeSurvey', survey.id]">
+          <span class="card-category">{{ survey.category }}</span>
+          <h3>{{ survey.title }}</h3>
+          <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
+        </a>
+      } @empty {
+        <div class="empty-list-state">
+          No {{ activeTab }} surveys found for this category.
+        </div>
+      }
+    </div>
+  </section>
 </section>
+
+<app-create-survey-component (published)="refreshSurveys()" />
