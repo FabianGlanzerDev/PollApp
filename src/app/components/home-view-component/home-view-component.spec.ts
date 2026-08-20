@@ -1,5 +1,7 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideRouter } from '@angular/router';
+import { Surveys } from '../../services/surveys';
 import { HomeViewComponent } from './home-view-component';
 
 describe('HomeViewComponent', () => {
@@ -9,6 +11,10 @@ describe('HomeViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomeViewComponent],
+      providers: [
+        provideRouter([]),
+        { provide: Surveys, useValue: { surveys: signal([]), getSurveys: vi.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeViewComponent);

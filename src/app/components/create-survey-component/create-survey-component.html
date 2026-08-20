@@ -3,12 +3,13 @@
   class="survey-dialog"
   (close)="onDialogClose()"
   (click)="closeFromBackdrop($event)"
+  aria-labelledby="create-survey-title"
 >
   <form class="survey-dialog-content" [formGroup]="surveyForm" (ngSubmit)="submit()">
     <header class="dialog-header">
       <span class="draft-badge">Draft</span>
-      <h2>Create Survey</h2>
-      <button class="cancel-button" type="button" (click)="close()">
+      <h2 id="create-survey-title">Create Survey</h2>
+      <button class="cancel-button" type="button" (click)="close()" aria-label="Cancel survey creation">
         <span>Cancel</span>
         <img src="assets/icons/close.svg" alt="" />
       </button>
@@ -49,6 +50,9 @@
           [class.open]="categoryOpen"
           [class.invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched"
           (click)="toggleCategory()"
+          aria-haspopup="listbox"
+          aria-controls="survey-category-list"
+          [attr.aria-expanded]="categoryOpen"
         >
           <span>{{ surveyForm.controls.category.value || 'Select category *' }}</span>
           <span class="arrow-icon" aria-hidden="true">
@@ -58,9 +62,9 @@
         </button>
 
         @if (categoryOpen) {
-          <ul class="category-list">
+          <ul id="survey-category-list" class="category-list" role="listbox">
             @for (category of categories; track category) {
-              <li><button type="button" (click)="selectCategory(category)">{{ category }}</button></li>
+              <li><button type="button" role="option" [attr.aria-selected]="surveyForm.controls.category.value === category" (click)="selectCategory(category)">{{ category }}</button></li>
             }
           </ul>
         }
@@ -71,20 +75,20 @@
       @for (question of questions.controls; track question; let questionIndex = $index) {
         <article class="question-card" [formGroupName]="questionIndex">
           <div class="question-heading">
-            <h3>Question {{ questionIndex + 1 }}</h3>
+            <label class="question-label" [for]="'question-' + questionIndex">Question {{ questionIndex + 1 }} *</label>
             <button class="delete-button" type="button" (click)="removeQuestion(questionIndex)" [attr.aria-label]="'Delete question ' + (questionIndex + 1)">
               <img class="delete-default" src="assets/icons/delete.svg" alt="" />
               <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
             </button>
           </div>
 
-          <input class="question-input" type="text" formControlName="questionText" placeholder="Which date would work best for you?" />
+          <input [id]="'question-' + questionIndex" class="question-input" type="text" formControlName="questionText" placeholder="Which date would work best for you?" />
           <p class="error" [class.hidden]="!(question.controls.questionText.invalid && question.controls.questionText.touched)">
             Please enter at least 5 characters.
           </p>
 
           <div class="answers-heading">
-            <h4>Answers</h4>
+            <h4>Answers *</h4>
             <label class="multiple-checkbox">
               <input type="checkbox" formControlName="allowMultiple" />
               <span class="checkbox-ui" aria-hidden="true"></span>
@@ -95,8 +99,8 @@
           <div class="answers-list" formArrayName="answers">
             @for (answer of getAnswers(questionIndex).controls; track answer; let answerIndex = $index) {
               <div class="answer-row" [formGroupName]="answerIndex">
-                <span class="answer-letter">{{ getLetter(answerIndex) }}.</span>
-                <input type="text" formControlName="answerText" />
+                <label class="answer-letter" [for]="'answer-' + questionIndex + '-' + answerIndex">{{ getLetter(answerIndex) }}.</label>
+                <input [id]="'answer-' + questionIndex + '-' + answerIndex" type="text" formControlName="answerText" />
                 <button class="delete-button" type="button" (click)="removeAnswer(questionIndex, answerIndex)" [attr.aria-label]="'Delete answer ' + getLetter(answerIndex)">
                   <img class="delete-default" src="assets/icons/delete.svg" alt="" />
                   <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
@@ -122,7 +126,11 @@
       }
     </section>
 
-    <button class="publish-button" type="submit" [class.disabled]="surveyForm.invalid || isSaving">
+    @if (publishError) {
+      <p class="publish-error" role="alert">{{ publishError }}</p>
+    }
+
+    <button class="publish-button" type="submit" [class.disabled]="surveyForm.invalid || isSaving" [disabled]="isSaving">
       <span>{{ isSaving ? 'Publishing...' : 'Publish' }}</span>
       <span class="publish-icon" aria-hidden="true">
         <img src="assets/icons/publish-check.svg" alt="" />

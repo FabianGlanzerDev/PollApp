@@ -127,7 +127,7 @@ h1 {
   }
 }
 
-@media (max-width: 735px) {
+@media (max-width: 800px) {
   .hero {
     grid-template-columns: 1fr;
     grid-template-areas: 'heading' 'image' 'content';

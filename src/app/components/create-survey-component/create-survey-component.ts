@@ -59,6 +59,7 @@ export class CreateSurveyComponent {
   categoryOpen = false;
   toastVisible = false;
   isSaving = false;
+  publishError = '';
 
   surveyForm = this.formBuilder.group({
     surveyName: ['', [Validators.required, trimmedMinLength(5)]],
@@ -206,13 +207,21 @@ export class CreateSurveyComponent {
   async submit() {
     this.surveyForm.markAllAsTouched();
     if (this.surveyForm.invalid || this.isSaving) return;
-    this.isSaving = true;
+    this.startPublishing();
     try {
       await this.surveysData.createSurvey(this.buildSurveyInput());
       this.finishPublish();
+    } catch {
+      this.publishError = 'Survey could not be published. Please try again.';
     } finally {
       this.isSaving = false;
     }
+  }
+
+
+  private startPublishing() {
+    this.publishError = '';
+    this.isSaving = true;
   }
 
 
@@ -288,5 +297,6 @@ export class CreateSurveyComponent {
     this.surveyForm.reset();
     this.surveyForm.markAsUntouched();
     this.categoryOpen = false;
+    this.publishError = '';
   }
 }

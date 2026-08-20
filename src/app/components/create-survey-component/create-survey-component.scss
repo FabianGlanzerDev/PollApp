@@ -267,11 +267,14 @@ input.ng-invalid.ng-touched {
   gap: 18px;
 }
 
-.question-heading h3,
+.question-label,
 .answers-heading h4 {
   margin: 0;
+  color: $color-white;
   font-size: 20px;
+  font-weight: 700;
 }
+
 
 .question-input {
   margin-top: 10px;
@@ -481,6 +484,13 @@ input.ng-invalid.ng-touched {
   }
 }
 
+.publish-error {
+  margin: 0 0 12px;
+  color: #ff8d8d;
+  font: 700 15px $font-body;
+  text-align: right;
+}
+
 @media (max-width: 800px) {
   .survey-dialog {
     width: calc(100vw - 24px);
@@ -586,7 +596,7 @@ input.ng-invalid.ng-touched {
     gap: 12px;
   }
 
-  .question-heading h3,
+  .question-label,
   .answers-heading h4 {
     font-size: 18px;
   }
