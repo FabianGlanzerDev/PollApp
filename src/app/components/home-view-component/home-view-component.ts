@@ -43,7 +43,7 @@ export class HomeViewComponent {
   /**
    * Provides access to the page document for home-specific body styling.
    */
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {}
+  constructor(@Inject(DOCUMENT) private readonly document: Document) { }
 
 
   /**

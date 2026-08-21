@@ -11,7 +11,7 @@
   margin: 0 auto;
 }
 
-.survey-section > h2 {
+.survey-section>h2 {
   margin: 40px 0 56px;
   color: $color-primary-orange;
   font-family: $font-heading;
@@ -299,7 +299,7 @@
     width: min(calc(100% - 40px), $survey-width);
   }
 
-  .survey-section > h2 {
+  .survey-section>h2 {
     margin-bottom: 40px;
     font-size: 64px;
   }
@@ -337,7 +337,7 @@
     width: min(calc(100% - 32px), $survey-width);
   }
 
-  .survey-section > h2 {
+  .survey-section>h2 {
     margin: 20px 0 32px;
     font-size: 48px;
     line-height: 0.95;
@@ -417,7 +417,7 @@
 }
 
 @media (max-width: 420px) {
-  .survey-section > h2 {
+  .survey-section>h2 {
     font-size: 44px;
   }
 

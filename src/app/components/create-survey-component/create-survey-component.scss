@@ -326,7 +326,7 @@ input.ng-invalid.ng-touched {
     opacity: 0;
   }
 
-  input:checked + .checkbox-ui {
+  input:checked+.checkbox-ui {
     background: $color-primary-orange url('../../../assets/icons/input-checked.svg') center / 14px 14px no-repeat;
   }
 }

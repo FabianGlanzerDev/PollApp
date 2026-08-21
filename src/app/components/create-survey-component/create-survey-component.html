@@ -1,10 +1,5 @@
-<dialog
-  #surveyDialog
-  class="survey-dialog"
-  (close)="onDialogClose()"
-  (click)="closeFromBackdrop($event)"
-  aria-labelledby="create-survey-title"
->
+<dialog #surveyDialog class="survey-dialog" (close)="onDialogClose()" (click)="closeFromBackdrop($event)"
+  aria-labelledby="create-survey-title">
   <form class="survey-dialog-content" [formGroup]="surveyForm" (ngSubmit)="submit()">
     <header class="dialog-header">
       <span class="draft-badge">Draft</span>
@@ -17,85 +12,89 @@
 
     <div class="survey-form-card">
       <section class="survey-data-card">
-      <div class="field survey-name-field">
-        <label for="survey-name">Survey name *</label>
-        <div class="input-delete-row">
-          <input id="survey-name" type="text" formControlName="surveyName" maxlength="100" placeholder="Team Event 2026" />
-          <button class="delete-button" type="button" (click)="surveyForm.controls.surveyName.reset()" aria-label="Clear survey name">
-            <img class="delete-default" src="assets/icons/delete.svg" alt="" />
-            <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
-          </button>
+        <div class="field survey-name-field">
+          <label for="survey-name">Survey name *</label>
+          <div class="input-delete-row">
+            <input id="survey-name" type="text" formControlName="surveyName" maxlength="100"
+              placeholder="Team Event 2026" />
+            <button class="delete-button" type="button" (click)="surveyForm.controls.surveyName.reset()"
+              aria-label="Clear survey name">
+              <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+              <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+            </button>
+          </div>
+          <p class="error"
+            [class.hidden]="!(surveyForm.controls.surveyName.invalid && surveyForm.controls.surveyName.touched)">
+            Please enter at least 5 characters.
+          </p>
         </div>
-        <p class="error" [class.hidden]="!(surveyForm.controls.surveyName.invalid && surveyForm.controls.surveyName.touched)">
-          Please enter at least 5 characters.
-        </p>
-      </div>
 
-      <div class="field date-field">
-        <label for="end-date">End date <span>(optional)</span></label>
-        <div class="input-delete-row">
-          <input id="end-date" type="date" formControlName="endDate" [min]="minEndDate" />
-          <button class="delete-button" type="button" (click)="surveyForm.controls.endDate.reset()" aria-label="Clear end date">
-            <img class="delete-default" src="assets/icons/delete.svg" alt="" />
-            <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
-          </button>
+        <div class="field date-field">
+          <label for="end-date">End date <span>(optional)</span></label>
+          <div class="input-delete-row">
+            <input id="end-date" type="date" formControlName="endDate" [min]="minEndDate" />
+            <button class="delete-button" type="button" (click)="surveyForm.controls.endDate.reset()"
+              aria-label="Clear end date">
+              <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+              <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+            </button>
+          </div>
+          <p class="error" [class.hidden]="!surveyForm.controls.endDate.hasError('pastDate')">
+            Please choose today or a future date.
+          </p>
         </div>
-        <p class="error" [class.hidden]="!surveyForm.controls.endDate.hasError('pastDate')">
-          Please choose today or a future date.
-        </p>
-      </div>
 
-      <div class="field description-field">
-        <label for="description">Description <span>(optional)</span></label>
-        <div class="input-delete-row description-row">
-          <textarea id="description" formControlName="description" rows="3" maxlength="500" placeholder="What is this survey about?"></textarea>
-          <button class="delete-button" type="button" (click)="surveyForm.controls.description.reset()" aria-label="Clear description">
-            <img class="delete-default" src="assets/icons/delete.svg" alt="" />
-            <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
-          </button>
+        <div class="field description-field">
+          <label for="description">Description <span>(optional)</span></label>
+          <div class="input-delete-row description-row">
+            <textarea id="description" formControlName="description" rows="3" maxlength="500"
+              placeholder="What is this survey about?"></textarea>
+            <button class="delete-button" type="button" (click)="surveyForm.controls.description.reset()"
+              aria-label="Clear description">
+              <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+              <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="category-field">
-        <button
-          class="category-button"
-          type="button"
-          [class.open]="categoryOpen"
-          [class.invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched"
-          (click)="toggleCategory()"
-          aria-controls="survey-category-list"
-          [attr.aria-expanded]="categoryOpen"
-        >
-          <span>{{ surveyForm.controls.category.value || 'Select category *' }}</span>
-          <span class="arrow-icon" aria-hidden="true">
-            <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
-            <img class="arrow-hover" src="assets/icons/arrow-drop-down-hover.svg" alt="" />
-          </span>
-        </button>
+        <div class="category-field">
+          <button class="category-button" type="button" [class.open]="categoryOpen"
+            [class.invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched"
+            (click)="toggleCategory()" aria-controls="survey-category-list" [attr.aria-expanded]="categoryOpen">
+            <span>{{ surveyForm.controls.category.value || 'Select category *' }}</span>
+            <span class="arrow-icon" aria-hidden="true">
+              <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
+              <img class="arrow-hover" src="assets/icons/arrow-drop-down-hover.svg" alt="" />
+            </span>
+          </button>
 
-        @if (categoryOpen) {
+          @if (categoryOpen) {
           <ul id="survey-category-list" class="category-list">
             @for (category of categories; track category) {
-              <li><button type="button" [class.selected]="surveyForm.controls.category.value === category" (click)="selectCategory(category)">{{ category }}</button></li>
+            <li><button type="button" [class.selected]="surveyForm.controls.category.value === category"
+                (click)="selectCategory(category)">{{ category }}</button></li>
             }
           </ul>
-        }
-      </div>
+          }
+        </div>
       </section>
 
       <section class="questions-section" formArrayName="questions">
-      @for (question of questions.controls; track question; let questionIndex = $index) {
+        @for (question of questions.controls; track question; let questionIndex = $index) {
         <article class="question-card" [formGroupName]="questionIndex">
           <div class="question-heading">
             <label class="question-label" [for]="'question-' + questionIndex">Question {{ questionIndex + 1 }} *</label>
-            <button class="delete-button" type="button" (click)="removeQuestion(questionIndex)" [attr.aria-label]="'Delete question ' + (questionIndex + 1)">
+            <button class="delete-button" type="button" (click)="removeQuestion(questionIndex)"
+              [attr.aria-label]="'Delete question ' + (questionIndex + 1)">
               <img class="delete-default" src="assets/icons/delete.svg" alt="" />
               <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
             </button>
           </div>
 
-          <input [id]="'question-' + questionIndex" class="question-input" type="text" formControlName="questionText" maxlength="200" placeholder="Which date would work best for you?" />
-          <p class="error" [class.hidden]="!(question.controls.questionText.invalid && question.controls.questionText.touched)">
+          <input [id]="'question-' + questionIndex" class="question-input" type="text" formControlName="questionText"
+            maxlength="200" placeholder="Which date would work best for you?" />
+          <p class="error"
+            [class.hidden]="!(question.controls.questionText.invalid && question.controls.questionText.touched)">
             Please enter at least 5 characters.
           </p>
 
@@ -110,40 +109,43 @@
 
           <div class="answers-list" formArrayName="answers">
             @for (answer of getAnswers(questionIndex).controls; track answer; let answerIndex = $index) {
-              <div class="answer-row" [formGroupName]="answerIndex">
-                <label class="answer-letter" [for]="'answer-' + questionIndex + '-' + answerIndex">{{ getLetter(answerIndex) }}.</label>
-                <input [id]="'answer-' + questionIndex + '-' + answerIndex" type="text" formControlName="answerText" maxlength="120" />
-                <button class="delete-button" type="button" (click)="removeAnswer(questionIndex, answerIndex)" [attr.aria-label]="'Delete answer ' + getLetter(answerIndex)">
-                  <img class="delete-default" src="assets/icons/delete.svg" alt="" />
-                  <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
-                </button>
-              </div>
+            <div class="answer-row" [formGroupName]="answerIndex">
+              <label class="answer-letter" [for]="'answer-' + questionIndex + '-' + answerIndex">{{
+                getLetter(answerIndex) }}.</label>
+              <input [id]="'answer-' + questionIndex + '-' + answerIndex" type="text" formControlName="answerText"
+                maxlength="120" />
+              <button class="delete-button" type="button" (click)="removeAnswer(questionIndex, answerIndex)"
+                [attr.aria-label]="'Delete answer ' + getLetter(answerIndex)">
+                <img class="delete-default" src="assets/icons/delete.svg" alt="" />
+                <img class="delete-hover" src="assets/icons/delete-hover.svg" alt="" />
+              </button>
+            </div>
             }
           </div>
 
-          @if (getAnswers(questionIndex).length < 6) {
-            <button class="add-answer-button" type="button" (click)="addAnswer(questionIndex)">
-              <span>Add answer</span>
-              <img src="assets/icons/add-circle.svg" alt="" />
+          @if (getAnswers(questionIndex).length < 6) { <button class="add-answer-button" type="button"
+            (click)="addAnswer(questionIndex)">
+            <span>Add answer</span>
+            <img src="assets/icons/add-circle.svg" alt="" />
             </button>
-          }
+            }
         </article>
-      }
+        }
 
-      @if (questions.length < 4) {
-        <button class="add-question-button" type="button" (click)="addQuestion()">
+        @if (questions.length < 4) { <button class="add-question-button" type="button" (click)="addQuestion()">
           <span>Add next question</span>
           <img src="assets/icons/add-circle.svg" alt="" />
-        </button>
-      }
+          </button>
+          }
       </section>
     </div>
 
     @if (publishError) {
-      <p class="publish-error" role="alert">{{ publishError }}</p>
+    <p class="publish-error" role="alert">{{ publishError }}</p>
     }
 
-    <button class="publish-button" type="submit" [class.disabled]="surveyForm.invalid || isSaving" [disabled]="isSaving">
+    <button class="publish-button" type="submit" [class.disabled]="surveyForm.invalid || isSaving"
+      [disabled]="isSaving">
       <span>{{ isSaving ? 'Publishing...' : 'Publish' }}</span>
       <span class="publish-icon" aria-hidden="true">
         <img src="assets/icons/publish-check.svg" alt="" />
@@ -153,10 +155,10 @@
 </dialog>
 
 @if (toastVisible) {
-  <div class="publish-toast" role="status">
-    <span>Your survey is now published</span>
-    <button type="button" (click)="toastVisible = false" aria-label="Close notification">
-      <img src="assets/icons/close-black.svg" alt="" />
-    </button>
-  </div>
+<div class="publish-toast" role="status">
+  <span>Your survey is now published</span>
+  <button type="button" (click)="toastVisible = false" aria-label="Close notification">
+    <img src="assets/icons/close-black.svg" alt="" />
+  </button>
+</div>
 }

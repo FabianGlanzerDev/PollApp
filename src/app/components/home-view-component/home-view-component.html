@@ -8,47 +8,32 @@
 
     <div class="ending-surveys">
       @for (survey of endingSoonSurveys; track survey.id) {
-        <a class="ending-card" [routerLink]="['/activeSurvey', survey.id]">
-          <span class="card-category">{{ survey.category }}</span>
-          <h3>{{ survey.title }}</h3>
-          <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
-        </a>
+      <a class="ending-card" [routerLink]="['/activeSurvey', survey.id]">
+        <span class="card-category">{{ survey.category }}</span>
+        <h3>{{ survey.title }}</h3>
+        <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
+      </a>
       } @empty {
-        <div class="empty-ending-state">No surveys are ending soon.</div>
+      <div class="empty-ending-state">No surveys are ending soon.</div>
       }
     </div>
 
     <div class="survey-controls">
       <div class="tab-buttons" role="tablist" aria-label="Survey status">
-        <button
-          type="button"
-          role="tab"
-          [class.active]="activeTab === 'active'"
-          [attr.aria-selected]="activeTab === 'active'"
-          (click)="$event.stopPropagation(); setTab('active')"
-        >
+        <button type="button" role="tab" [class.active]="activeTab === 'active'"
+          [attr.aria-selected]="activeTab === 'active'" (click)="$event.stopPropagation(); setTab('active')">
           Active survey
         </button>
-        <button
-          type="button"
-          role="tab"
-          [class.active]="activeTab === 'past'"
-          [attr.aria-selected]="activeTab === 'past'"
-          (click)="$event.stopPropagation(); setTab('past')"
-        >
+        <button type="button" role="tab" [class.active]="activeTab === 'past'"
+          [attr.aria-selected]="activeTab === 'past'" (click)="$event.stopPropagation(); setTab('past')">
           Past survey
         </button>
       </div>
 
       <div class="category-filter">
-        <button
-          type="button"
-          class="category-toggle"
-          [class.open]="dropdownOpen"
-          (click)="toggleCategoryDropdown($event)"
-          aria-controls="home-category-list"
-          [attr.aria-expanded]="dropdownOpen"
-        >
+        <button type="button" class="category-toggle" [class.open]="dropdownOpen"
+          (click)="toggleCategoryDropdown($event)" aria-controls="home-category-list"
+          [attr.aria-expanded]="dropdownOpen">
           <span>Sort by categories</span>
           <span class="arrow-wrapper" aria-hidden="true">
             <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
@@ -57,20 +42,17 @@
         </button>
 
         @if (selectedCategory !== 'All Surveys') {
-          <span class="selected-category">{{ selectedCategory }}</span>
+        <span class="selected-category">{{ selectedCategory }}</span>
         }
 
         <ul id="home-category-list" class="category-list" [class.open]="dropdownOpen">
           @for (category of categories; track category) {
-            <li>
-              <button
-                type="button"
-                [class.selected]="selectedCategory === category"
-                (click)="selectCategory(category, $event)"
-              >
-                {{ category }}
-              </button>
-            </li>
+          <li>
+            <button type="button" [class.selected]="selectedCategory === category"
+              (click)="selectCategory(category, $event)">
+              {{ category }}
+            </button>
+          </li>
           }
         </ul>
       </div>
@@ -78,15 +60,15 @@
 
     <div class="survey-grid">
       @for (survey of displayedSurveys; track survey.id) {
-        <a class="survey-list-card" [routerLink]="['/activeSurvey', survey.id]">
-          <span class="card-category">{{ survey.category }}</span>
-          <h3>{{ survey.title }}</h3>
-          <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
-        </a>
+      <a class="survey-list-card" [routerLink]="['/activeSurvey', survey.id]">
+        <span class="card-category">{{ survey.category }}</span>
+        <h3>{{ survey.title }}</h3>
+        <span class="deadline-badge">{{ getDeadlineText(survey) }}</span>
+      </a>
       } @empty {
-        <div class="empty-list-state">
-          No {{ activeTab }} surveys found for this category.
-        </div>
+      <div class="empty-list-state">
+        No {{ activeTab }} surveys found for this category.
+      </div>
       }
     </div>
   </section>

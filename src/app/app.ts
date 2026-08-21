@@ -11,4 +11,4 @@ import { Header } from './components/header/header';
 /**
  * Root component that hosts the global header and routed page content.
  */
-export class App {}
+export class App { }
