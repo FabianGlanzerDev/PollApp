@@ -19,7 +19,9 @@ Creating a survey is intentionally **not** a route. `CreateSurveyComponent` is o
 
 ## Data Layer
 
-`Surveys` is the central data service. It handles Supabase persistence, loading survey content, vote submission and Supabase Realtime updates. A local-storage fallback remains available when Supabase is not configured.
+`Surveys` is the central orchestration service for survey state and Realtime subscriptions. `SurveySupabaseRepository` contains the Supabase reads and writes, while `SurveyLocalStorage` contains the browser fallback used when Supabase is not configured.
+
+`survey-result-preview.ts` calculates the temporary result preview shown immediately when a participant selects an answer. The final vote is still persisted only after `Complete survey` is pressed.
 
 ## Backend
 

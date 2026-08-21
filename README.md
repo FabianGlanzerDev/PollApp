@@ -47,7 +47,7 @@ npm start
 The application opens automatically in the browser. By default Angular uses:
 
 ```text
-http://localhost:4200/angular-projekts/poll_app/
+http://localhost:4200/poll_app/
 ```
 
 ## Supabase Setup
@@ -60,7 +60,13 @@ supabase/setup.sql
 
 Run this SQL file once in the Supabase SQL Editor to create the required tables and Realtime configuration.
 
-The application expects the Supabase connection values in:
+The repository contains a safe configuration template:
+
+```text
+src/environments/environment.example.ts
+```
+
+Create your local configuration from that template:
 
 ```text
 src/environments/environment.ts
@@ -75,7 +81,7 @@ export const environment = {
 };
 ```
 
-Only a Supabase publishable/anon key belongs in the frontend. Secret or service-role keys must not be stored in the Angular application.
+`environment.ts` is intentionally ignored by Git. Only a Supabase publishable/anon key belongs in the frontend. Secret or service-role keys must never be stored in the Angular application or committed to the repository.
 
 ## Project Structure
 
@@ -120,7 +126,7 @@ See `ARCHITECTURE.md` for the current component and data-flow overview.
 The production base path is configured in `angular.json` as:
 
 ```text
-/angular-projekts/poll_app/
+/poll_app/
 ```
 
 `public/.htaccess` provides the Apache fallback to `index.html` so routed survey URLs can also be reloaded directly after deployment.

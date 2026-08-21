@@ -4,31 +4,70 @@ import {
   AbstractControl,
   FormArray,
   FormBuilder,
+  FormControl,
+  FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { NewSurveyInput } from '../../interfaces/survey-interface';
 import { Surveys } from '../../services/surveys';
 
+const SURVEY_NAME_MIN_LENGTH = 5;
+const QUESTION_MIN_LENGTH = 5;
+const ANSWER_MIN_LENGTH = 1;
+const MAX_QUESTIONS = 4;
+const MAX_ANSWERS = 6;
+const MIN_ANSWERS = 2;
+const INITIAL_QUESTION_COUNT = 1;
+const FIRST_INDEX = 0;
+const ISO_DATE_LENGTH = 10;
+const TOAST_DURATION_MS = 3000;
+const FIRST_ANSWER_CHARACTER = 'A';
+
+
+
+/**
+ * Typed form group used for one answer option.
+ */
+export type AnswerForm = FormGroup<{
+  answerText: FormControl<string | null>;
+}>;
+
+
+
+/**
+ * Typed form group used for one survey question.
+ */
+export type QuestionForm = FormGroup<{
+  questionText: FormControl<string | null>;
+  allowMultiple: FormControl<boolean | null>;
+  answers: FormArray<AnswerForm>;
+}>;
+
+
+
 /**
  * Creates a validator that checks the trimmed text length.
  *
  * @param minLength Minimum number of non-whitespace characters.
- * @returns An Angular validator function.
+ * @returns A ValidatorFn that reports trimmedMinLength when the value is too short.
  */
-const trimmedMinLength = (minLength: number) => {
+const trimmedMinLength = (minLength: number): ValidatorFn => {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = String(control.value ?? '').trim();
     return value.length >= minLength ? null : { trimmedMinLength: true };
   };
 };
 
+
+
 /**
  * Rejects dates that are earlier than the current day.
  *
  * @param control Form control containing the selected date.
- * @returns A validation error for past dates, otherwise null.
+ * @returns A ValidationErrors object for past dates, otherwise null.
  */
 const notPastDate = (control: AbstractControl): ValidationErrors | null => {
   if (!control.value) return null;
@@ -37,15 +76,17 @@ const notPastDate = (control: AbstractControl): ValidationErrors | null => {
   return new Date(control.value) < today ? { pastDate: true } : null;
 };
 
+
+
+/**
+ * Manages the create-survey dialog, validation and dynamic questions and answers.
+ */
 @Component({
   selector: 'app-create-survey-component',
   imports: [ReactiveFormsModule],
   templateUrl: './create-survey-component.html',
   styleUrl: './create-survey-component.scss',
 })
-/**
- * Manages the create-survey dialog, validation and dynamic questions and answers.
- */
 export class CreateSurveyComponent {
   @ViewChild('surveyDialog') dialog?: ElementRef<HTMLDialogElement>;
   @Output() published = new EventEmitter<void>();
@@ -55,14 +96,14 @@ export class CreateSurveyComponent {
   private readonly surveysData = inject(Surveys);
 
   readonly categories = ['Health Care', 'Business', 'Lifestyle', 'Education', 'Population', 'Money', 'Environment', 'Work'];
-  readonly minEndDate = new Date().toISOString().slice(0, 10);
+  readonly minEndDate = new Date().toISOString().slice(FIRST_INDEX, ISO_DATE_LENGTH);
   categoryOpen = false;
   toastVisible = false;
   isSaving = false;
   publishError = '';
 
   surveyForm = this.formBuilder.group({
-    surveyName: ['', [Validators.required, trimmedMinLength(5)]],
+    surveyName: ['', [Validators.required, trimmedMinLength(SURVEY_NAME_MIN_LENGTH)]],
     endDate: ['', notPastDate],
     description: [''],
     category: ['', Validators.required],
@@ -70,38 +111,45 @@ export class CreateSurveyComponent {
   });
 
 
+
   /**
-   * Returns the question form array of the survey form.
+   * Provides the question controls stored in the survey form.
+   *
+   * @returns A FormArray containing the survey question groups.
    */
-  get questions() {
+  get questions(): FormArray<QuestionForm> {
     return this.surveyForm.controls.questions;
   }
+
 
 
   /**
    * Opens the survey dialog and prevents background scrolling.
    */
-  open() {
+  open(): void {
     this.dialog?.nativeElement.showModal();
     this.document.body.style.overflow = 'hidden';
   }
 
 
+
   /**
    * Closes the create-survey dialog.
    */
-  close() {
+  close(): void {
     this.dialog?.nativeElement.close();
   }
+
 
 
   /**
    * Resets the form and restores page scrolling after the dialog closes.
    */
-  onDialogClose() {
+  onDialogClose(): void {
     this.resetForm();
     this.document.body.style.removeProperty('overflow');
   }
+
 
 
   /**
@@ -109,18 +157,20 @@ export class CreateSurveyComponent {
    *
    * @param event The click event raised by the dialog.
    */
-  closeFromBackdrop(event: MouseEvent) {
+  closeFromBackdrop(event: MouseEvent): void {
     if (event.target === this.dialog?.nativeElement) this.close();
   }
+
 
 
   /**
    * Toggles the category picker and marks the control as touched when closing it.
    */
-  toggleCategory() {
+  toggleCategory(): void {
     this.categoryOpen = !this.categoryOpen;
     if (!this.categoryOpen) this.surveyForm.controls.category.markAsTouched();
   }
+
 
 
   /**
@@ -128,29 +178,33 @@ export class CreateSurveyComponent {
    *
    * @param category The category selected by the user.
    */
-  selectCategory(category: string) {
+  selectCategory(category: string): void {
     this.surveyForm.controls.category.setValue(category);
+    this.surveyForm.controls.category.markAsTouched();
     this.categoryOpen = false;
   }
+
 
 
   /**
    * Returns the answer form array for a question.
    *
    * @param questionIndex Index of the question in the form.
-   * @returns The answer controls belonging to the question.
+   * @returns A FormArray containing the answer groups for the selected question.
    */
-  getAnswers(questionIndex: number) {
-    return this.questions.at(questionIndex).controls.answers as FormArray;
+  getAnswers(questionIndex: number): FormArray<AnswerForm> {
+    return this.questions.at(questionIndex).controls.answers;
   }
+
 
 
   /**
    * Adds another question while the configured question limit is not reached.
    */
-  addQuestion() {
-    if (this.questions.length < 4) this.questions.push(this.createQuestion());
+  addQuestion(): void {
+    if (this.questions.length < MAX_QUESTIONS) this.questions.push(this.createQuestion());
   }
+
 
 
   /**
@@ -158,10 +212,11 @@ export class CreateSurveyComponent {
    *
    * @param questionIndex Index of the question to remove.
    */
-  removeQuestion(questionIndex: number) {
-    if (questionIndex === 0) this.questions.at(0).reset();
+  removeQuestion(questionIndex: number): void {
+    if (questionIndex === FIRST_INDEX) this.questions.at(FIRST_INDEX).reset();
     else this.questions.removeAt(questionIndex);
   }
+
 
 
   /**
@@ -169,10 +224,11 @@ export class CreateSurveyComponent {
    *
    * @param questionIndex Index of the target question.
    */
-  addAnswer(questionIndex: number) {
+  addAnswer(questionIndex: number): void {
     const answers = this.getAnswers(questionIndex);
-    if (answers.length < 6) answers.push(this.createAnswer());
+    if (answers.length < MAX_ANSWERS) answers.push(this.createAnswer());
   }
+
 
 
   /**
@@ -181,30 +237,33 @@ export class CreateSurveyComponent {
    * @param questionIndex Index of the target question.
    * @param answerIndex Index of the answer to remove.
    */
-  removeAnswer(questionIndex: number, answerIndex: number) {
+  removeAnswer(questionIndex: number, answerIndex: number): void {
     const answers = this.getAnswers(questionIndex);
-    if (questionIndex === 0 && answerIndex < 2) answers.at(answerIndex).reset();
-    else if (answers.length > 2) answers.removeAt(answerIndex);
+    if (questionIndex === FIRST_INDEX && answerIndex < MIN_ANSWERS) answers.at(answerIndex).reset();
+    else if (answers.length > MIN_ANSWERS) answers.removeAt(answerIndex);
   }
+
 
 
   /**
    * Converts a zero-based answer index to its alphabetical label.
    *
    * @param index Zero-based answer index.
-   * @returns The corresponding uppercase letter.
+   * @returns A string containing the corresponding uppercase answer letter.
    */
-  getLetter(index: number) {
-    return String.fromCharCode(65 + index);
+  getLetter(index: number): string {
+    const firstCharacterCode = FIRST_ANSWER_CHARACTER.charCodeAt(FIRST_INDEX);
+    return String.fromCharCode(firstCharacterCode + index);
   }
+
 
 
   /**
    * Validates and publishes the survey while preventing duplicate submissions.
    *
-   * @returns A promise that resolves when publishing has finished.
+   * @returns A Promise that resolves when the publishing attempt has finished.
    */
-  async submit() {
+  async submit(): Promise<void> {
     this.surveyForm.markAllAsTouched();
     if (this.surveyForm.invalid || this.isSaving) return;
     this.startPublishing();
@@ -219,32 +278,49 @@ export class CreateSurveyComponent {
   }
 
 
-  private startPublishing() {
+
+  /**
+   * Clears old errors and marks the current publish operation as active.
+   */
+  private startPublishing(): void {
     this.publishError = '';
     this.isSaving = true;
   }
 
 
-  private createAnswer() {
+
+  /**
+   * Creates a required answer control for a question.
+   *
+   * @returns An AnswerForm containing one validated answer text control.
+   */
+  private createAnswer(): AnswerForm {
     return this.formBuilder.group({
-      answerText: ['', [Validators.required, trimmedMinLength(1)]],
+      answerText: ['', [Validators.required, trimmedMinLength(ANSWER_MIN_LENGTH)]],
     });
   }
 
 
-  private createQuestion() {
+
+  /**
+   * Creates the initial controls required for one survey question.
+   *
+   * @returns A QuestionForm containing text, voting mode and answer controls.
+   */
+  private createQuestion(): QuestionForm {
     return this.formBuilder.group({
-      questionText: ['', [Validators.required, trimmedMinLength(5)]],
+      questionText: ['', [Validators.required, trimmedMinLength(QUESTION_MIN_LENGTH)]],
       allowMultiple: [false],
       answers: this.formBuilder.array([this.createAnswer(), this.createAnswer()]),
     });
   }
 
 
+
   /**
    * Converts the reactive form values into the survey payload used by the service.
    *
-   * @returns A normalized survey creation payload.
+   * @returns A NewSurveyInput containing normalized survey and question values.
    */
   private buildSurveyInput(): NewSurveyInput {
     const raw = this.surveyForm.getRawValue();
@@ -262,26 +338,35 @@ export class CreateSurveyComponent {
   }
 
 
-  private finishPublish() {
+
+  /**
+   * Announces the published survey, closes the dialog and shows the success toast.
+   */
+  private finishPublish(): void {
     this.published.emit();
     this.close();
     this.showToast();
   }
 
 
-  private showToast() {
+
+  /**
+   * Displays the publish confirmation for the configured duration.
+   */
+  private showToast(): void {
     this.toastVisible = true;
-    window.setTimeout(() => (this.toastVisible = false), 3000);
+    window.setTimeout(() => (this.toastVisible = false), TOAST_DURATION_MS);
   }
+
 
 
   /**
    * Restores the form to its initial question and answer structure.
    */
-  private resetForm() {
-    while (this.questions.length > 1) this.questions.removeAt(this.questions.length - 1);
-    const answers = this.getAnswers(0);
-    while (answers.length > 2) answers.removeAt(answers.length - 1);
+  private resetForm(): void {
+    while (this.questions.length > INITIAL_QUESTION_COUNT) this.questions.removeAt(this.questions.length - 1);
+    const answers = this.getAnswers(FIRST_INDEX);
+    while (answers.length > MIN_ANSWERS) answers.removeAt(answers.length - 1);
     this.surveyForm.reset();
     this.surveyForm.markAsUntouched();
     this.categoryOpen = false;

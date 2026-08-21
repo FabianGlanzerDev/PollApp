@@ -60,13 +60,21 @@
         <div class="category-field">
           <button class="category-button" type="button" [class.open]="categoryOpen"
             [class.invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched"
-            (click)="toggleCategory()" aria-controls="survey-category-list" [attr.aria-expanded]="categoryOpen">
-            <span>{{ surveyForm.controls.category.value || 'Select category *' }}</span>
+            (click)="toggleCategory()" aria-controls="survey-category-list" aria-describedby="category-error"
+            [attr.aria-expanded]="categoryOpen"
+            [attr.aria-invalid]="surveyForm.controls.category.invalid && surveyForm.controls.category.touched">
+            <span>{{ surveyForm.controls.category.value || 'Choose category *' }}</span>
             <span class="arrow-icon" aria-hidden="true">
               <img class="arrow-default" src="assets/icons/arrow-drop-down.svg" alt="" />
               <img class="arrow-hover" src="assets/icons/arrow-drop-down-hover.svg" alt="" />
             </span>
           </button>
+
+          <p id="category-error" class="error category-error"
+            [class.hidden]="!(surveyForm.controls.category.invalid && surveyForm.controls.category.touched)"
+            role="alert">
+            Please choose a category.
+          </p>
 
           @if (categoryOpen) {
           <ul id="survey-category-list" class="category-list">

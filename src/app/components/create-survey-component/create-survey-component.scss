@@ -183,9 +183,15 @@ input.ng-invalid.ng-touched {
   }
 }
 
+
+.category-error {
+  margin-left: 10px;
+}
+
+
 .category-field {
   position: relative;
-  align-self: end;
+  align-self: start;
   z-index: 3;
 }
 
@@ -248,7 +254,7 @@ input.ng-invalid.ng-touched {
 
 .category-list {
   position: absolute;
-  top: calc(100% + 4px);
+  top: 46px;
   left: 0;
   width: 100%;
   min-width: 220px;
